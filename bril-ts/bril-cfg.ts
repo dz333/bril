@@ -12,11 +12,12 @@ export interface BasicBlock {
 export interface CFGNode {
   name: string,
   block: BasicBlock,
-  next: CFGNode[]
+  successors: CFGNode[],
+  predecessors: CFGNode[]
 }
 
-const entryLabel = "__entry__";
-const exitLabel = "__exit__";
+export const entryLabel = "__entry__";
+export const exitLabel = "__exit__";
 
 function isTerminator(instr: bril.Instruction) {
   if ('op' in instr) {
@@ -25,12 +26,12 @@ function isTerminator(instr: bril.Instruction) {
   return false; 
 }
 
-function createBasicBlocks(prog: bril.Program) {
+function createBasicBlocks(fname: string, prog: bril.Program) {
   let blocks: BasicBlock[]= []
   let idx = 0
   let cur_block: BasicBlock = {name: entryLabel, instrs: [], idx: idx}
   for (let func of prog.functions) {
-    if (func.name === "main") {
+    if (func.name === fname) {
       for (let instr of func.instrs) {
         if ('label' in instr) {
           blocks.push(cur_block)
@@ -80,15 +81,15 @@ function getNamedNodes(names: bril.Ident[], nodes: CFGNode[]): CFGNode[] {
   return result;
 }
 
-function createCFG(blocks: BasicBlock[]) {
+export function createCFG(blocks: BasicBlock[]) {
   let nodeList:CFGNode[] = [] 
   for (let block of blocks) {
     let name = (block.name == null) ? "block" + block.idx : block.name
-    let node:CFGNode = {name: name, block: block, next: []}
+    let node:CFGNode = {name: name, block: block, successors: [], predecessors: []}
     nodeList.push(node)
   }
   let exit:BasicBlock = {name: null, idx: nodeList.length, instrs:[]}
-  nodeList.push({name:exitLabel, block: exit, next:[]})
+  nodeList.push({name:exitLabel, block: exit, successors:[], predecessors:[]})
 
   for (let node of nodeList) {
     let successors:bril.Ident[] = []
@@ -98,13 +99,25 @@ function createCFG(blocks: BasicBlock[]) {
       }
     }
     for (let n of getNamedNodes(successors, nodeList)) {
-      node.next.push(n)
+      node.successors.push(n)
+      n.predecessors.push(node)
     }
     if (successors.length == 0 && node.block.idx + 1 < nodeList.length) {
-        node.next.push(nodeList[node.block.idx + 1])
+        let nextBlock = nodeList[node.block.idx + 1]
+        node.successors.push(nextBlock)
+        nextBlock.predecessors.push(node);
      }
   }
   return nodeList;
+}
+
+export function getNamedNode(name: string, cfg:CFGNode[]): CFGNode | null {
+  let nodes = getNamedNodes([name], cfg)
+  if (nodes.length > 0) {
+    return nodes[0]
+  } else {
+    return null;
+  }
 }
 
 function printCFG(fname: string, cfg:CFGNode[]) {
@@ -115,8 +128,13 @@ function printCFG(fname: string, cfg:CFGNode[]) {
   }
 
   for (let n of cfg) {
-    for (let succ of n.next) {
+    for (let succ of n.successors) {
       result += "  " + n.name.split(".").join("_") + " -> " + succ.name.split(".").join("_") + ";\n"
+    }
+  }
+  for (let n of cfg) {
+    for (let pred of n.predecessors) {
+      result += "  " + n.name.split(".").join("_") + " -> " + pred.name.split(".").join("_") + " [color = blue];\n"
     }
   }
   result += "}\n"
@@ -127,7 +145,7 @@ function printCFG(fname: string, cfg:CFGNode[]) {
 async function main() {
   // Get the Bril filename.
   let prog = JSON.parse(await readStdin()) as bril.Program;
-  let blocks = createBasicBlocks(prog)
+  let blocks = createBasicBlocks("main", prog);
   if (sys.args.length > 0) {
     process.stdout.write(
       JSON.stringify(blocks, undefined, 2)
