@@ -36,6 +36,10 @@ export class CFGNode implements HasEquals {
     return this.name;
   }
 }
+export interface Edge {
+  from: CFGNode;
+  to: CFGNode;
+}
 
 export const entryLabel = "__entry__";
 export const exitLabel = "__exit__";
@@ -155,7 +159,11 @@ export function printCFG(fname: string, cfg:CFGNode[], doms: Option<DominatorMap
 
   for (let n of cfg) {
     for (let succ of n.successors) {
-      result += "  " + n.name.split(".").join("_") + " -> " + succ.name.split(".").join("_") + ";\n"
+      let style = "solid"
+      if (doms.isSome() && isBackEdge(n, succ, doms.get())) {
+        style = "dashed"
+      }
+      result += "  " + n.name.split(".").join("_") + " -> " + succ.name.split(".").join("_") + " [style = " + style + "];\n"
     }
   }
   for (let n of cfg) {
@@ -220,6 +228,23 @@ function getDominatorsHelper(blocks:CFGNode[]): DominatorMap {
         changed = true;
       }
       result = result.put(b, doms);
+    }
+  }
+  return result;
+}
+
+function isBackEdge(from: CFGNode, to: CFGNode, doms:DominatorMap) {
+  return doms.get(from).getOrThrow().contains(to);
+}
+
+function getBackEdges(nodes: CFGNode[], doms:DominatorMap) {
+  let result:Edge[] = [];
+  for (let n of nodes) {
+    let nDoms = doms.get(n).getOrThrow();
+    for (let succ of n.successors) {
+      if (nDoms.contains(succ)) {
+        result.push( { from: n, to: succ} );
+      }
     }
   }
   return result;
