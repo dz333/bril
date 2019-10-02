@@ -6,13 +6,15 @@
   "bin": {
     "ts2bril": "build/ts2bril.js",
     "brili": "build/brili.js",
-    "bril-cfg": "build/bril-cfg.js"
+    "brilcfg": "build/bril-cfg.js",
+    "brildom": "build/bril-dom.js"
   },
   "scripts": {
-    "build": "tsc && chmod a+x build/ts2bril.js build/brili.js build/bril-cfg.js"
+    "build": "tsc && chmod a+x build/ts2bril.js build/brili.js build/bril-cfg.js build/bril-dom.js"
   },
   "dependencies": {
     "@types/node": "^11.13.5",
+    "prelude-ts": "^0.8.3",
     "typescript": "^3.4.3"
   }
 }
