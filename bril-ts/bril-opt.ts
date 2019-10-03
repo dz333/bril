@@ -12,16 +12,33 @@ export type DominatorMap = HashMap<CFGNode, HashSet<CFGNode>>;
 
 export class CFGNode implements HasEquals {
 
-  name: string;
-  block: BasicBlock;
-  successors: CFGNode[];
-  predecessors: CFGNode[];
+  readonly name: string;
+  private block: BasicBlock;
+  private successors: HashSet<CFGNode>;
+  private predecessors: HashSet<CFGNode>;
 
-  constructor(name: string, block:BasicBlock, successors: CFGNode[], predecessors: CFGNode[]) {
+  constructor(name: string, block:BasicBlock, successors:HashSet<CFGNode>, predecessors:HashSet<CFGNode>) {
     this.name = name;
     this.block = block;
     this.successors = successors;
     this.predecessors = predecessors;
+  }
+
+  addEdgeTo(other:CFGNode) {
+    this.successors = this.successors.add(other);
+    other.predecessors = other.predecessors.add(this);
+  }
+
+  getBlock() {
+    return this.block;
+  }
+
+  getSuccessors() {
+    return this.successors;
+  }
+
+  getPredecessors() {
+    return this.predecessors;
   }
 
   equals(other: CFGNode): boolean {
@@ -115,27 +132,25 @@ export function createCFG(blocks: BasicBlock[]) {
   let nodeList:CFGNode[] = [] 
   for (let block of blocks) {
     let name = (block.name == null) ? "block" + block.idx : block.name
-    let node:CFGNode = new CFGNode(name, block , [], []);
+    let node:CFGNode = new CFGNode(name, block , HashSet.empty(), HashSet.empty());
     nodeList.push(node)
   }
   let exit:BasicBlock = {name: null, idx: nodeList.length, instrs:[]}
-  nodeList.push(new CFGNode(exitLabel, exit, [], []));
+  nodeList.push(new CFGNode(exitLabel, exit, HashSet.empty(), HashSet.empty()));
 
   for (let node of nodeList) {
     let successors:bril.Ident[] = []
-    for (let instr of node.block.instrs) {
+    for (let instr of node.getBlock().instrs) {
       for (let s of getSuccessors(instr)) {
         successors.push(s)
       }
     }
     for (let n of getNamedNodes(successors, nodeList)) {
-      node.successors.push(n)
-      n.predecessors.push(node)
+      node.addEdgeTo(n);
     }
-    if (successors.length == 0 && node.block.idx + 1 < nodeList.length) {
-        let nextBlock = nodeList[node.block.idx + 1]
-        node.successors.push(nextBlock)
-        nextBlock.predecessors.push(node);
+    if (successors.length == 0 && node.getBlock().idx + 1 < nodeList.length) {
+        let nextBlock = nodeList[node.getBlock().idx + 1]
+        node.addEdgeTo(nextBlock);
      }
   }
   return nodeList;
@@ -158,7 +173,7 @@ export function printCFG(fname: string, cfg:CFGNode[], doms: Option<DominatorMap
   }
 
   for (let n of cfg) {
-    for (let succ of n.successors) {
+    for (let succ of n.getSuccessors()) {
       let style = "solid"
       if (doms.isSome() && isBackEdge(n, succ, doms.get())) {
         style = "dashed"
@@ -167,7 +182,7 @@ export function printCFG(fname: string, cfg:CFGNode[], doms: Option<DominatorMap
     }
   }
   for (let n of cfg) {
-    for (let pred of n.predecessors) {
+    for (let pred of n.getPredecessors()) {
       result += "  " + n.name.split(".").join("_") + " -> " + pred.name.split(".").join("_") + " [color = blue];\n"
     }
   }
@@ -194,7 +209,7 @@ function postorderHelper(root:CFGNode, explored: HashSet<CFGNode>, result:CFGNod
       return explored;
   } else {
       explored = explored.add(root);
-      for (let s of root.successors) {
+      for (let s of root.getSuccessors()) {
           explored = postorderHelper(s, explored, result);
       }
       result.push(root);
@@ -216,10 +231,10 @@ function getDominatorsHelper(blocks:CFGNode[]): DominatorMap {
     changed = false;
     for (let b of blocks) {
       let doms = HashSet.ofIterable(blocks);
-      if (b.predecessors.length == 0) {
+      if (b.getPredecessors().length() == 0) {
         doms = HashSet.empty()
       } else {
-        for (let p of b.predecessors) {
+        for (let p of b.getPredecessors()) {
           doms = doms.intersect(result.get(p).getOrThrow());
         }
       }
@@ -241,11 +256,31 @@ function getBackEdges(nodes: CFGNode[], doms:DominatorMap) {
   let result:Edge[] = [];
   for (let n of nodes) {
     let nDoms = doms.get(n).getOrThrow();
-    for (let succ of n.successors) {
+    for (let succ of n.getSuccessors()) {
       if (nDoms.contains(succ)) {
         result.push( { from: n, to: succ} );
       }
     }
   }
   return result;
+}
+
+/*
+ * Modifies _entry_ so that _newHeader_
+ * becomes the sole predecessor of _entry_, excluding
+ * back-edges. This must also updates the
+ * predecessors of _entry_ to change their
+ * successor lists.
+ * 
+ * _entry_ must be the header of a natural loop
+ * _newHeader_ is the CFGNode to insert as the pre-header.
+ * _backEdgeNodes_ is the set of predecessors of _entry_ which
+ * should not enter the pre-header.
+ */
+export function addHeader(entry: CFGNode, newHeader:CFGNode, backEdgeNodes:Set<CFGNode>) {
+  for (let p of entry.getPredecessors()) {
+    if (!backEdgeNodes.has(p)) {
+
+    }
+  }
 }
