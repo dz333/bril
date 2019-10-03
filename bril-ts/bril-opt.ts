@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as bril from './bril';
 import { HashMap, HashSet, HasEquals, stringHashCode, Option } from 'prelude-ts';
+import { getPositionOfLineAndCharacter } from 'typescript';
 
 export interface BasicBlock {
   name: bril.Ident | null;
@@ -27,6 +28,16 @@ export class CFGNode implements HasEquals {
   addEdgeTo(other:CFGNode) {
     this.successors = this.successors.add(other);
     other.predecessors = other.predecessors.add(this);
+  }
+
+  removeEdgeTo(other:CFGNode) {
+    this.successors = this.successors.remove(other);
+    other.predecessors = other.predecessors.remove(this);
+  }
+
+  replaceEdgeTo(originalSucc:CFGNode, newSucc:CFGNode) {
+    this.removeEdgeTo(originalSucc);
+    this.addEdgeTo(newSucc);
   }
 
   getBlock() {
@@ -266,21 +277,23 @@ function getBackEdges(nodes: CFGNode[], doms:DominatorMap) {
 }
 
 /*
- * Modifies _entry_ so that _newHeader_
+ * Modifies _entry_ so that _preHeader_
  * becomes the sole predecessor of _entry_, excluding
  * back-edges. This must also updates the
  * predecessors of _entry_ to change their
  * successor lists.
  * 
  * _entry_ must be the header of a natural loop
- * _newHeader_ is the CFGNode to insert as the pre-header.
+ * _preHeader_ is the CFGNode to insert as the pre-header.
  * _backEdgeNodes_ is the set of predecessors of _entry_ which
  * should not enter the pre-header.
  */
-export function addHeader(entry: CFGNode, newHeader:CFGNode, backEdgeNodes:Set<CFGNode>) {
-  for (let p of entry.getPredecessors()) {
+export function addHeader(entry: CFGNode, preHeader:CFGNode, backEdgeNodes:Set<CFGNode>) {
+  let preds = entry.getPredecessors();
+  for (let p of preds) { //preds is immutable, we can update entry :)
     if (!backEdgeNodes.has(p)) {
-
+      p.removeEdgeTo(entry);
+      p.addEdgeTo(preHeader);
     }
   }
 }
