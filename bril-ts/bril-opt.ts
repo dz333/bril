@@ -280,10 +280,35 @@ function getBackEdges(nodes: CFGNode[], doms:DominatorMap) {
   return result;
 }
 
+
+function getCanReach(node:CFGNode, without:CFGNode) {
+  return getCanReachHelper(node, HashSet.of(without));
+}
+
+function getCanReachHelper(node:CFGNode, explored:HashSet<CFGNode>) {
+  if (explored.contains(node)) {
+    return explored;
+  } else {
+    explored = explored.add(node);
+    for (let p of node.getPredecessors()) {
+      explored = getCanReachHelper(p, explored);
+    }
+    return explored;
+  }
+}
+
 export function findNaturalLoops(cfg: CFGNode[], doms:DominatorMap) {
   let backEdges = getBackEdges(cfg, doms);
-  
+  let loops = []
+  for (let be of backEdges) {
+    //remove be.to from Graph
+    //find nodes that can reach be.from
+    let loop = getCanReach(be.from, be.to);
+    loops.push(loop);
+  }
+  return loops;
 }
+
 /*
  * Modifies _entry_ so that _preHeader_
  * becomes the sole predecessor of _entry_, excluding
