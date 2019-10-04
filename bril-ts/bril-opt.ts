@@ -215,6 +215,10 @@ export function postorder(root:CFGNode):CFGNode[] {
   return result;
 }
 
+/* Modifies _result_ in place, but returns
+ * the set of _explored_ nodes since HashSet<> is an immutable
+ * data structure.
+ */
 function postorderHelper(root:CFGNode, explored: HashSet<CFGNode>, result:CFGNode[]) {
   if (explored.contains(root)) {
       return explored;
@@ -276,6 +280,10 @@ function getBackEdges(nodes: CFGNode[], doms:DominatorMap) {
   return result;
 }
 
+export function findNaturalLoops(cfg: CFGNode[], doms:DominatorMap) {
+  let backEdges = getBackEdges(cfg, doms);
+  
+}
 /*
  * Modifies _entry_ so that _preHeader_
  * becomes the sole predecessor of _entry_, excluding
