@@ -14,6 +14,9 @@ async function main() {
     process.stdout.write(
       JSON.stringify(blocks, undefined, 2)
     );
+    process.stderr.write(
+      JSON.stringify({ functions : [cfg.cfgToBril("main", cfg.createCFG(blocks))] }, undefined, 2)
+    );
   } else {
     cfg.printCFG("main", cfg.createCFG(blocks), Option.none());
   }

@@ -1,77 +1,11 @@
 #!/usr/bin/env node
 import * as bril from './bril';
-import { HashMap, HashSet, HasEquals, stringHashCode, Option } from 'prelude-ts';
+import { HashMap, HashSet, Option } from 'prelude-ts';
+import { AnonymousBlock, BasicBlock, entryLabel, exitLabel,
+   TerminatingBlock, CFGNode, DominatorMap, Edge } from './cfg-defs';
 
-export interface BasicBlock {
-  name: bril.Ident;
-  idx: number;
-  instrs: (bril.Instruction| bril.Label)[]
-}
 
-export type DominatorMap = HashMap<CFGNode, HashSet<CFGNode>>;
-
-export class CFGNode implements HasEquals {
-
-  readonly name: string;
-  private block: BasicBlock;
-  private successors: HashSet<CFGNode>;
-  private predecessors: HashSet<CFGNode>;
-
-  constructor(name: string, block:BasicBlock, successors:HashSet<CFGNode>, predecessors:HashSet<CFGNode>) {
-    this.name = name;
-    this.block = block;
-    this.successors = successors;
-    this.predecessors = predecessors;
-  }
-
-  addEdgeTo(other:CFGNode) {
-    this.successors = this.successors.add(other);
-    other.predecessors = other.predecessors.add(this);
-  }
-
-  removeEdgeTo(other:CFGNode) {
-    this.successors = this.successors.remove(other);
-    other.predecessors = other.predecessors.remove(this);
-  }
-
-  replaceEdgeTo(originalSucc:CFGNode, newSucc:CFGNode) {
-    this.removeEdgeTo(originalSucc);
-    this.addEdgeTo(newSucc);
-  }
-
-  getBlock() {
-    return this.block;
-  }
-
-  getSuccessors() {
-    return this.successors;
-  }
-
-  getPredecessors() {
-    return this.predecessors;
-  }
-
-  equals(other: CFGNode): boolean {
-    return this.name === other.name;
-  }
-
-  hashCode(): number {
-    return stringHashCode(this.name);
-  }
-  
-  toString(): string {
-    return this.name;
-  }
-}
-export interface Edge {
-  from: CFGNode;
-  to: CFGNode;
-}
-
-export const entryLabel = "__entry__";
-export const exitLabel = "__exit__";
-
-function isTerminator(instr: bril.Instruction | bril.Label) {
+function isTerminator(instr: bril.Instruction) {
   if ('op' in instr) {
     return ["br", "jmp", "ret"].includes(instr.op);
   }
@@ -89,26 +23,46 @@ function isTerminator(instr: bril.Instruction | bril.Label) {
 export function createBasicBlocks(fname: string, prog: bril.Program) {
   let blocks: BasicBlock[] = []
   let idx = 0
-  let cur_block: BasicBlock = {name: getBlockName(idx), instrs: [ { label: getBlockName(idx)} ], idx: idx}
+
+  //only add basic blocks if they were labeled
+  //or had some instructions in them. If they
+  //had instructions but no label, give them a fresh label
+  function addBlock(block: AnonymousBlock) {
+    let name = (block.name == null) ? getBlockName(block.idx) : block.name;
+    let newBlock =  {
+      name : name,
+      idx : block.idx,
+      instrs: block.instrs
+    };
+    if (block.name == null) {
+      if (!isEmpty(block)) {
+        blocks.push(newBlock);
+      } else {
+        return;
+      }
+    } else {
+      blocks.push(newBlock);
+    }
+  }
+
+  let cur_block: AnonymousBlock = {name: null, instrs: [], idx: idx}
   for (let func of prog.functions) {
     if (func.name === fname) {
       for (let instr of func.instrs) {
         if ('label' in instr) {
-          if (cur_block.instrs.length > 0) { blocks.push(cur_block) }
+          addBlock(cur_block);
           idx += 1
-          cur_block = { name: instr.label, instrs: [instr], idx: idx}
+          cur_block = { name: instr.label, instrs: [], idx: idx}
         } else if (isTerminator(instr)) {
           cur_block.instrs.push(instr)
-          blocks.push(cur_block)
+          addBlock(cur_block);
           idx += 1
-          cur_block = { name: getBlockName(idx), instrs: [ { label: getBlockName(idx)} ], idx: idx }
+          cur_block = { name: null, instrs: [], idx: idx }
         } else {
           cur_block.instrs.push(instr)
         }
       }
-      if (cur_block.instrs.length > 0 || cur_block.name !== null) {
-        blocks.push(cur_block)
-      }
+      addBlock(cur_block);
     }
   }
   blocks.unshift( { name: entryLabel, idx: -1, instrs: [] } );
@@ -120,6 +74,17 @@ function getBlockName(idx: number): string {
   return "__block" + idx + "__";
 }
 
+function castToTerminator(i: bril.Instruction): bril.EffectOperation {
+  switch (i.op) {
+    case "jmp":
+    case "br":
+    case "ret":
+      return i;
+    default:
+      throw `instruction is not terminator!`
+  }
+}
+
 /**
  * Given an ordered list of BasicBlocks,
  * this adds "return" or "jmp" instructions
@@ -127,21 +92,43 @@ function getBlockName(idx: number): string {
  * This removes all "fall-through" semantics and allows for
  * basic block re-ordering.
  */
-export function addFallThroughTerminators(blocks: BasicBlock[]) {
+export function addFallThroughTerminators(blocks: BasicBlock[]): TerminatingBlock[] {
+  let result:TerminatingBlock[] = [];
   blocks.forEach((b, idx) => {
     let last_instr = (b.instrs.length > 0 ) ? b.instrs[b.instrs.length - 1] : null;
     let next_block = (idx + 1 < blocks.length) ? blocks[idx + 1] : null;
+    let termInstr:bril.EffectOperation = { "op" : "ret", "args": [] };
+    let instrs = b.instrs;
     if (last_instr == null || !isTerminator(last_instr)) {
       if (next_block == null) {
-        b.instrs.push( { "op" : "ret", "args": []})
+        termInstr =  { "op" : "ret", "args": [] };
       } else {
-        b.instrs.push( { "op" : "jmp", "args": [next_block.name] } );
+        termInstr = { "op" : "jmp", "args": [next_block.name] };
       }
+    } else {
+      termInstr = castToTerminator(last_instr);
+      if (instrs.length > 0) { instrs = instrs.slice(0, instrs.length - 1) }
     }
+    result.push ({
+      name: b.name,
+      instrs: instrs,
+      idx: b.idx,
+      termInstr: termInstr
+    })
   });
+  return result;
 }
 
-function getSuccessors(instr: bril.Instruction|bril.Label): bril.Ident[] {
+function isEmpty(block: AnonymousBlock) {
+  for (let i of block.instrs) {
+    if (i.op != "nop") {
+      return false;
+    }
+  }
+  return true;
+}
+
+function getSuccessors(instr: bril.Instruction): bril.Ident[] {
   if ('op' in instr) {
     switch(instr.op) {
       case "ret": {
@@ -168,6 +155,13 @@ function getNamedNodes(names: bril.Ident[], nodes: CFGNode[]): CFGNode[] {
   return result;
 }
 
+/**
+ * Creates a CFG for the given function name only.
+ * This creates a list of basic blocks for the given
+ * function and then creates a CFG using `createCFG(blocks:BasicBlock[])`.
+ * @param fname The function in `prog` to create a CFG for.
+ * @param prog The Bril program to analyze.
+ */
 export function createFunctionCFG(fname: string, prog:bril.Program) {
   let blocks = createBasicBlocks(fname, prog);
   return createCFG(blocks);
@@ -176,46 +170,61 @@ export function createFunctionCFG(fname: string, prog:bril.Program) {
 /**
  * This takes in a list of BasicBlocks,
  * which must be ordered in program text order.
+ * It assumes that the first block is the entry point
+ * to the program (this is used to eliminate unreachable nodes
+ * from the produced graph).
+ * 
  * This return a new list of CFGNodes which correspond
  * to these blocks. The order of the returned list
  * corresponds to the order in which these nodes
  * should be serialized to a Bril program.
+ * 
+ * @param blocks The program-ordered list of basic blocks
+ * of the function. These blocks are assumed to use "fall through"
+ * semantics, in that a block without a terminator is succeeded
+ * by the next block in the list. The first block in the list
+ * will be treated as the entry point to the function.
  */
 export function createCFG(blocks: BasicBlock[]) {
-  addFallThroughTerminators(blocks);
-  let nodeList:CFGNode[] = [] 
-  for (let block of blocks) {
-    let name = (block.name == null) ? "block" + block.idx : block.name
-    let node:CFGNode = new CFGNode(name, block , HashSet.empty(), HashSet.empty());
+  let nodeList:CFGNode[] = []
+  let termBlocks = addFallThroughTerminators(blocks);
+  for (let block of termBlocks) {
+    let node:CFGNode = new CFGNode(block.name, block , HashSet.empty(), HashSet.empty());
     nodeList.push(node)
   }
   for (let node of nodeList) {
     let successors:bril.Ident[] = []
-    for (let instr of node.getBlock().instrs) {
-      for (let s of getSuccessors(instr)) {
-        successors.push(s)
-      }
+    //All blocks must have at least 1 instruction
+    let last_instr = node.getTerminator();
+    let successorNodes = getNamedNodes(getSuccessors(last_instr), nodeList);
+    if (successorNodes.length == 2) {
+      node.setSuccessors(successorNodes[0], successorNodes[1], last_instr.args[0]);
+    } else if (node.name != exitLabel) {
+      node.setSuccessor(successorNodes[0]);
     }
-    for (let n of getNamedNodes(successors, nodeList)) {
-      node.addEdgeTo(n);
-    }
-    if (successors.length == 0 && node.getBlock().idx + 1 < nodeList.length) {
-        let nextBlock = nodeList[node.getBlock().idx + 1]
-        node.addEdgeTo(nextBlock);
-     }
   }
-  return nodeList;
+  return removeUnreachableNodes(nodeList[0], nodeList);
 }
 
-export function getNamedNode(name: string, cfg:CFGNode[]): CFGNode | null {
-  let nodes = getNamedNodes([name], cfg)
-  if (nodes.length > 0) {
-    return nodes[0]
-  } else {
-    return null;
+function removeUnreachableNodes(root:CFGNode, cfg:CFGNode[]) {
+  let result = [];
+  for (let n of cfg) {
+    if (n == root || n.getPredecessors().length() > 0){ 
+      result.push(n);
+    } else {
+      n.delete();
+    }
   }
+  return result;
 }
 
+/**
+ * A pretty printer for the CFG that
+ * produces a GraphViz-interpretable string.
+ * @param fname The function name (i.e. name of the output graph)
+ * @param cfg The list of reachable nodes in the cfg of `fname`.
+ * @param doms An optional Dominator Map
+ */
 export function printCFG(fname: string, cfg:CFGNode[], doms: Option<DominatorMap>) {
   let result = "digraph " + fname + " {\n"
 
@@ -249,7 +258,7 @@ export function printCFG(fname: string, cfg:CFGNode[], doms: Option<DominatorMap
   return;
 }
 
-export function postorder(root:CFGNode):CFGNode[] {
+function postorder(root:CFGNode):CFGNode[] {
   let result:CFGNode[] = [];
   postorderHelper(root, HashSet.empty(), result);
   return result;
@@ -272,6 +281,11 @@ function postorderHelper(root:CFGNode, explored: HashSet<CFGNode>, result:CFGNod
   }
 }
 
+/**
+ * This produces a mapping from every reachable node in the graph
+ * to all of the nodes which _dominate_ that node.
+ * @param root The entry point to the function that this CFG models
+ */
 export function getDominators(root:CFGNode) {
   return getDominatorsHelper(postorder(root).reverse());
 }
@@ -337,6 +351,11 @@ function getCanReachHelper(node:CFGNode, explored:HashSet<CFGNode>) {
   }
 }
 
+/**
+ * 
+ * @param cfg 
+ * @param doms 
+ */
 export function findNaturalLoops(cfg: CFGNode[], doms:DominatorMap) {
   let backEdges = getBackEdges(cfg, doms);
   let loops = []
@@ -367,16 +386,17 @@ export function addHeader(prog: CFGNode[], entry: CFGNode, preHeader:CFGNode, ba
     //TODO we should modify the removeEdgeTo and addEdgeTo
     //methods so that they modify the corresponding instructions in the basic blocks
     if (!backEdgeNodes.has(p)) {
-      p.removeEdgeTo(entry);
-      p.addEdgeTo(preHeader);
+      p.replaceEdgeTo(entry, preHeader);
     }
   }
 }
 
 export function cfgToBril(fname: string, nodes: CFGNode[]): bril.Function {
-  let instrs:(bril.Label|bril.Instruction)[] = [];
-  for (let n of nodes) { 
-    instrs = instrs.concat(n.getBlock().instrs);
+  let instrs:(bril.Instruction | bril.Label)[] = [];
+  for (let n of nodes) {
+    instrs.push( { label: n.name } );
+    instrs = instrs.concat(n.getInstrs());
+    instrs.push(n.getTerminator());
   }
   return { name: fname, instrs: instrs };
 }
