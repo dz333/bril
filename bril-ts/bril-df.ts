@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import * as bril from './bril';
 import * as cfg from './cfg-defs';
-import { HashMap, HashSet, Vector } from 'prelude-ts';
+import { HashMap, HashSet, Vector, hasEquals, stringHashCode, HasEquals } from 'prelude-ts';
 
 
 export interface DFAnalysis<T> {
@@ -91,4 +91,54 @@ export let definedVars: DFAnalysis<string> = {
     initVal: HashSet.empty(),
     merge: setUnion,
     transfer: addDefined
+}
+
+export interface Location {
+    block: cfg.CFGNode,
+    index: number
+}
+
+export class Definition implements HasEquals {
+    readonly varName: string;
+    readonly loc: Location;
+
+    constructor(n: string, l: Location) {
+        this.varName = n;
+        this.loc = l;
+    }
+
+    equals(other: Definition): boolean {
+        return this.varName === other.varName &&
+        this.loc.block.equals(other.loc.block) &&
+        this.loc.index == other.loc.index;
+    }
+
+    hashCode(): number {
+        return stringHashCode(this.varName + this.loc.block.name + this.loc.index);
+    }
+
+}
+
+function reachingTransfer(block: cfg.CFGNode, inVals: HashSet<Definition>): HashSet<Definition> {
+    let result = inVals;
+    block.getInstrs().forEach((i, idx) => {
+        if (bril.isValueInstruction(i)) {
+            let def = new Definition(i.dest, { block: block, index: idx } );
+            let toRemove = result.filter((d) => {
+                return d.varName == i.dest;
+            })
+            for (let existingDef of toRemove) {
+                result = result.remove(existingDef);
+            }
+            result = result.add(def);
+        }
+    });
+    return result;
+}
+
+export let reachingDefinitions: DFAnalysis<Definition> = {
+    isForward: true,
+    initVal: HashSet.empty(),
+    merge: setUnion,
+    transfer: reachingTransfer
 }
