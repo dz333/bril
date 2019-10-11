@@ -81,6 +81,10 @@ export type Instruction = Operation | Constant;
  */
 export type ValueInstruction = Constant | ValueOperation;
 
+export function isValueInstruction(object: any): object is ValueInstruction {
+  return 'dest' in object;
+}
+
 /**
  * The valid opcodes for value-producing instructions.
  */

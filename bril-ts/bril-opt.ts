@@ -5,7 +5,7 @@ import { AnonymousBlock, BasicBlock, entryLabel, exitLabel,
    TerminatingBlock, CFGNode, DominatorMap, Edge } from './cfg-defs';
 
 
-function isTerminator(instr: bril.Instruction) {
+function isTerminator(instr: bril.Instruction): instr is bril.EffectOperation {
   if ('op' in instr) {
     return ["br", "jmp", "ret"].includes(instr.op);
   }
@@ -383,8 +383,6 @@ export function findNaturalLoops(cfg: CFGNode[], doms:DominatorMap) {
 export function addHeader(prog: CFGNode[], entry: CFGNode, preHeader:CFGNode, backEdgeNodes:Set<CFGNode>) {
   let preds = entry.getPredecessors();
   for (let p of preds) { //preds is immutable, we can update entry :)
-    //TODO we should modify the removeEdgeTo and addEdgeTo
-    //methods so that they modify the corresponding instructions in the basic blocks
     if (!backEdgeNodes.has(p)) {
       p.replaceEdgeTo(entry, preHeader);
     }
