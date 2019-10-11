@@ -76,6 +76,10 @@ export type Operation = EffectOperation | ValueOperation | PointerValueOperation
  */
 export type Instruction = Operation | Constant;
 
+export function isOperation(i: Instruction): i is Operation {
+  return i.op != "const";
+}
+
 /**
  * Both constants and value operations produce results.
  */

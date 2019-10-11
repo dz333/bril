@@ -76,14 +76,43 @@ function setUnion<T>(sets: HashSet<T>[]): HashSet<T> {
     return result;
 }
 
-function addDefined(block: cfg.CFGNode, inVals: HashSet<string>): HashSet<string> {
-    let result = inVals;
+function written(block: cfg.CFGNode): HashSet<string> {
+    let result: HashSet<string> = HashSet.empty();
     for (let inst of block.getInstrs()) {
         if (bril.isValueInstruction(inst)) {
             result = result.add(inst.dest)
         }
     }
     return result;
+}
+
+function used(block: cfg.CFGNode) {
+    let localDef = HashSet.empty();
+    let used: HashSet<string> = HashSet.empty();
+    let instrs = Vector.ofIterable(block.getInstrs()).append(block.getTerminator())
+    for (let i of instrs) {
+        if (bril.isOperation(i)) {
+            let reads: Vector<string> = Vector.empty();
+            if (i.op == "br") {
+                reads = reads.append(i.args[0]);
+            } else if (i.op != "jmp") {
+                reads = Vector.ofIterable(i.args);
+            }
+            for (let a of reads) {
+                if (!localDef.contains(a)) {
+                    used = used.add(a);
+                }
+            }
+        }
+        if (bril.isValueInstruction(i)) {
+            localDef = localDef.add(i.dest);
+        }
+    }
+    return used;
+}
+
+function addDefined(block: cfg.CFGNode, inVals: HashSet<string>): HashSet<string> {
+    return inVals.addAll(written(block).toVector())
 }
 
 export let definedVars: DFAnalysis<string> = {
@@ -119,6 +148,7 @@ export class Definition implements HasEquals {
 
 }
 
+
 function reachingTransfer(block: cfg.CFGNode, inVals: HashSet<Definition>): HashSet<Definition> {
     let result = inVals;
     block.getInstrs().forEach((i, idx) => {
@@ -141,4 +171,17 @@ export let reachingDefinitions: DFAnalysis<Definition> = {
     initVal: HashSet.empty(),
     merge: setUnion,
     transfer: reachingTransfer
+}
+
+function liveTransfer(block: cfg.CFGNode, outVals: HashSet<string>): HashSet<string> {
+    let varsWritten = written(block);
+    let varsUsed = used(block);
+    return setUnion([varsUsed,outVals.removeAll(varsWritten)]);
+}
+
+export let liveVars: DFAnalysis<string> = {
+    isForward: false,
+    initVal: HashSet.empty(),
+    merge: setUnion,
+    transfer: liveTransfer
 }
