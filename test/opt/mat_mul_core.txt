@@ -1,0 +1,43 @@
+  i: int = const 0;
+  one: int = const 1;
+for.cond.1:
+  v5: bool = lt i end;
+  br v5 for.body.1 for.end.1;
+for.body.1:
+  j: int = const 0;
+for.cond.6:
+  v10: bool = lt j end;
+  br v10 for.body.6 for.end.6;
+for.body.6:
+  k: int = const 0;
+for.cond.11:
+  v15: bool = lt k end;
+  br v15 for.body.11 for.end.11;
+for.body.11:
+  a_inc: int = mul i end;
+  a_inc: int = add a_inc j;
+  a_ptr_idx: ptr<int> = ptradd a a_inc;
+  a_val: int = load a_ptr_idx;
+  b_inc: int = mul j end;
+  b_inc: int = add b_inc k;
+  b_ptr_idx: ptr<int> = ptradd b b_inc;
+  b_val: int = load b_ptr_idx;
+  c_inc: int = mul i end;
+  c_inc: int = add c_inc k;
+  c_ptr_idx: ptr<int> = ptradd c c_inc;
+  c_val: int = load c_ptr_idx;
+  tmp: int = mul a_val b_val;
+  c_val: int = add c_val tmp;
+  store c_ptr_idx c_val;
+  k: int = add k one;
+  jmp for.cond.11;
+for.end.11:
+  j: int = add j one;
+  jmp for.cond.6;
+for.end.6:
+  i: int = add i one;
+  jmp for.cond.1;
+for.end.1:
+  c_val: int = load c_ptr_idx;
+  print c_val;
+

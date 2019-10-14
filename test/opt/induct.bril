@@ -1,0 +1,28 @@
+main {
+  size: int = const 8;
+  a: ptr<int> = alloc size;
+  b: ptr<int> = alloc size;
+  one: int = const 1;
+  i: int = const 0;
+  i2: ins = id i;
+  i3: int = id i;
+for.cond.2:
+  cond: bool = lt i size;
+  br cond for.body.2 for.end.2;
+for.body.2:
+  ptrb: ptr<int> = ptradd b i3;
+  store ptrb i3;
+  i3: int = add i3 one;
+  ptra: ptr<int> = ptradd a i2;
+  store ptra i2;
+  i2: int = add i2 one;
+  i: int = add i one;
+  jmp for.cond.2;
+for.end.2:
+  tmp: int = load ptra;
+  print tmp;
+  tmp: int = load ptrb;
+  print tmp;
+  free a;
+  free b;
+}

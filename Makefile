@@ -3,7 +3,8 @@ TESTS := test/parse/*.bril \
 	test/interp/*.bril \
 	test/mem/*.bril \
 	test/fail/*.t \
-	test/ts/*.ts
+	test/ts/*.ts \
+	test/opt/*.bril
 
 .PHONY: test
 test:
