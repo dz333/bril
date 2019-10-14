@@ -86,6 +86,8 @@ function written(block: cfg.CFGNode): HashSet<string> {
     return result;
 }
 
+//get all variables that are used
+//before they are written
 function used(block: cfg.CFGNode) {
     let localDef = HashSet.empty();
     let used: HashSet<string> = HashSet.empty();

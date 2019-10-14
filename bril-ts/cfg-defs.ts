@@ -80,6 +80,10 @@ export class CFGNode implements HasEquals {
       this.termInstr = termInstr;
     }
   
+    setInstrs(instrs:bril.Instruction[]) {
+      this.instrs = instrs;
+    }
+
     private addEdgeTo(other:CFGNode) {
       this.successors = this.successors.add(other);
       other.predecessors = other.predecessors.add(this);

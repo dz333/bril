@@ -3,6 +3,7 @@ import * as bril from './bril';
 import { HashMap, HashSet, Option } from 'prelude-ts';
 import { AnonymousBlock, BasicBlock, entryLabel, exitLabel,
    TerminatingBlock, CFGNode, DominatorMap, Edge } from './cfg-defs';
+import * as df from './bril-df';
 
 
 function isTerminator(instr: bril.Instruction): instr is bril.EffectOperation {
@@ -389,6 +390,94 @@ export function addHeader(prog: CFGNode[], entry: CFGNode, preHeader:CFGNode, ba
   }
 }
 
+/**
+ * This iteratively computes live variables
+ * and deletes instructions whose writes are never read,
+ * until nothing changes. The live variables are
+ * used to assist a basic block level code deletion
+ * algorithm and are also recomputed every time
+ * the program is modified.
+ * @param func - The function to optimize
+ */
+export function eliminateDeadCode(func: CFGNode[]) {
+  let changed = true;
+  while (changed) {
+    changed = false;
+    let liveNodes = df.dfWorklist(func, df.liveVars);
+    for (let node of func) {
+      //have to avoid short circuiting by introducing a new var
+      let newChange = eliminateKilledLocals(node, liveNodes.outs.get(node).getOrThrow());
+      changed = changed || newChange; 
+    }
+  }
+}
+
+/**
+ * Modify the given cfg node to delete any instructions
+ * whose results are never read. This comes in two forms:
+ * 1) instructions whose destinations are overwritten
+ * before being read
+ * 2) instructions whose destinations are never read
+ * in this block and are not live-outs.
+ * 
+ * Returns true iff _node_ was changed.
+ * @param node The basic block to optimize.
+ * @param liveOuts The list of live variables after the
+ * execution of this basic block
+ */
+function eliminateKilledLocals(node: CFGNode, liveOuts: HashSet<string>) {
+    let toDrop: HashSet<number> = HashSet.empty();
+    let lastDef: HashMap<string, number> = HashMap.empty();
+    const instrs = node.getInstrs();
+    for (let idx = 0; idx < instrs.length; idx ++) {
+      let i = instrs[idx];
+      //If an arg is read, remove it
+      //from the candidate drop list
+      //N.B. need to do this before adding candidates to toDrop
+      //b/c of instructions like: a = a + 1 -> this should not drop _a_
+      if (bril.isOperation(i)) {
+        let args = i.args;
+        lastDef = lastDef.filter(k => { return !args.includes(k); });
+      }
+      if (bril.isValueInstruction(i)) {
+        //If the destination of this instruction
+        //has been written to but not read, add it
+        //to the to-drop list.
+        let lastIdx = lastDef.get(i.dest)
+        if (lastIdx.isSome()) {
+          toDrop = toDrop.add(lastIdx.get());
+        }
+        lastDef = lastDef.put(i.dest, idx);
+      }
+    }
+    //any lastDefs who are not also live outs
+    //and who are not args of the terminator
+    //can be droped too
+    let termArgs = node.getTerminator().args;
+    lastDef.forEach(entry => {
+      if (!termArgs.includes(entry[0]) && !liveOuts.contains(entry[0])) {
+        toDrop = toDrop.add(entry[1]);
+      }});
+    let result: bril.Instruction[] = [];
+ 
+    instrs.forEach((i, idx) => {
+      if (bril.isValueInstruction(i)) {
+        if (!toDrop.contains(idx)) { result.push(i); }
+      } else {
+        result.push(i);
+      }
+    })
+    node.setInstrs(result);
+    return result.length != instrs.length;
+}
+/**
+ * Given a list of CFG nodes for a function, produce the bril function that
+ * corresponds to that CFG. The bril text
+ * is laid out in the same order as the provided
+ * list of nodes.
+ * @param fname The name of the function to produce
+ * @param nodes The list of nodes in the cfg.
+ */
 export function cfgToBril(fname: string, nodes: CFGNode[]): bril.Function {
   let instrs:(bril.Instruction | bril.Label)[] = [];
   for (let n of nodes) {

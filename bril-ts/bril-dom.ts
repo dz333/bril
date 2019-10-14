@@ -46,6 +46,10 @@ async function main() {
         process.stderr.write("Loop: " + l.toString() + "\n");
     }
     printLiveVars(graph);
+    cfg.eliminateDeadCode(graph);
+    process.stderr.write(
+        JSON.stringify({ functions : [cfg.cfgToBril("main", graph)] }, undefined, 2)
+    );
 }
 process.on('unhandledRejection', e => { throw e });
   

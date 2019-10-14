@@ -85,8 +85,8 @@ export function isOperation(i: Instruction): i is Operation {
  */
 export type ValueInstruction = Constant | ValueOperation;
 
-export function isValueInstruction(object: any): object is ValueInstruction {
-  return 'dest' in object;
+export function isValueInstruction(i: Instruction): i is ValueInstruction {
+  return 'dest' in i;
 }
 
 /**
