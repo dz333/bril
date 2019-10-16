@@ -7,13 +7,16 @@
     "ts2bril": "build/ts2bril.js",
     "brili": "build/brili.js",
     "brilcfg": "build/bril-cfg.js",
-    "brildom": "build/bril-dom.js"
+    "brildom": "build/bril-dom.js",
+    "brilopt": "build/bril-run-opt.js"
   },
   "scripts": {
-    "build": "tsc && chmod a+x build/ts2bril.js build/brili.js build/bril-cfg.js build/bril-dom.js"
+    "build": "tsc && chmod a+x build/ts2bril.js build/brili.js build/bril-cfg.js build/bril-dom.js build/bril-run-opt.js"
   },
   "dependencies": {
+    "@types/argparse": "^1.0.36",
     "@types/node": "^11.13.5",
+    "argparse": "^1.0.10",
     "prelude-ts": "^0.8.3",
     "typescript": "^3.4.3"
   }

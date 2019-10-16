@@ -1,0 +1,11 @@
+main {
+  a: int = const 100;
+  a: int = const 42;
+  cond: bool = lt a a;
+  b: int = id a;
+  br cond lbl done;
+lbl:
+  print a;
+done:
+  ret;
+}
