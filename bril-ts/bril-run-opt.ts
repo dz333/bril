@@ -4,6 +4,7 @@ import { ArgumentParser } from "argparse";
 import { readFile, writeFile } from "./util";
 import * as bril from './bril';
 import { createFunctionCFG, eliminateDeadCode, cfgToBril } from "./bril-opt";
+import { eliminateInductionVars } from "./bril-induction-var-elim";
 
 function optimize(prog: bril.Program, optName: string) {
     if (optName == 'nop') { return }
@@ -15,6 +16,10 @@ function optimize(prog: bril.Program, optName: string) {
                 eliminateDeadCode(cfg);
                 let newf = cfgToBril(f.name, cfg);
                 newInstrs = newf.instrs;
+                break;
+            case 'ive':
+                eliminateInductionVars(cfg);
+                newInstrs = cfgToBril(f.name, cfg).instrs;
                 break;
             default:
                 throw `unrecognized optimization pass name ${optName}`
@@ -41,7 +46,7 @@ async function main() {
       {
           help: 'The name of the optimization to run',
           defaultValue: 'nop',
-          choices: ['nop', 'dce']
+          choices: ['nop', 'dce', 'ive']
       }
   );
   parser.addArgument(

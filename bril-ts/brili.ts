@@ -297,10 +297,12 @@ function evalInstr(instr: bril.Instruction, env: Env, heap:Heap<Value>): Action 
   throw `unhandled opcode ${(instr as any).op}`;
 }
 
-function evalFunc(func: bril.Function, heap: Heap<Value>) {
+function evalFunc(func: bril.Function, heap: Heap<Value>): number {
   let env: Env = new Map();
+  let num_insns_executed = 0;
   for (let i = 0; i < func.instrs.length; ++i) {
     let line = func.instrs[i];
+    num_insns_executed++;
     if ('op' in line) {
       let action = evalInstr(line, env, heap);
 
@@ -316,17 +318,19 @@ function evalFunc(func: bril.Function, heap: Heap<Value>) {
           throw `label ${action.label} not found`;
         }
       } else if ('end' in action) {
-        return;
+        return num_insns_executed;
       }
     }
   }
+  return num_insns_executed;
 }
 
 function evalProg(prog: bril.Program) {
   let heap = new Heap<Value>()
   for (let func of prog.functions) {
     if (func.name === "main") {
-      evalFunc(func, heap);
+      let num_insns_exectuted = evalFunc(func, heap);
+      console.log("Executed " + num_insns_exectuted + " intructions.");
     }
   }
   if (!heap.isEmpty()) {

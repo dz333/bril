@@ -76,6 +76,7 @@ function setUnion<T>(sets: HashSet<T>[]): HashSet<T> {
     return result;
 }
 
+// returns the set of variables in a block that are written to
 function written(block: cfg.CFGNode): HashSet<string> {
     let result: HashSet<string> = HashSet.empty();
     for (let inst of block.getInstrs()) {
