@@ -1,0 +1,32 @@
+main {
+  size: int = const 8;
+  objsize: int = const 5;
+  asize: int = mul size objsize;
+  a: ptr<int> = alloc asize;
+  b: ptr<int> = alloc asize;
+  one: int = const 1;
+  i: int = const 0;
+  i2: int = id i;
+  i3: int = id i;
+for.cond.2:
+  cond: bool = lt i size;
+  br cond for.body.2 for.end.2;
+for.body.2:
+  idx3:int = mul objsize i3;
+  ptrb: ptr<int> = ptradd b idx3;
+  store ptrb i3;
+  i3: int = add i3 one;
+  idx2:int = mul objsize i2;
+  ptra: ptr<int> = ptradd a idx2;
+  store ptra i2;
+  i2: int = add i2 one;
+  i: int = add i one;
+  jmp for.cond.2;
+for.end.2:
+  tmp: int = load ptra;
+  print tmp;
+  tmp: int = load ptrb;
+  print tmp;
+  free a;
+  free b;
+}
