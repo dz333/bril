@@ -170,8 +170,8 @@ export function eliminateInductionVars(func: CFGNode[]) {
     let reaching_definitions = dfWorklist(func, liveVars);
 
     for (let loop of loops) {
-        let basic_ind_vars = get_basic_induction_vars(loop, reaching_definitions);
-        let derived_ind_vars = get_derived_induction_variables(basic_ind_vars, loop, reaching_definitions);
+        let basic_ind_vars = get_basic_induction_vars(loop.blocks, reaching_definitions);
+        let derived_ind_vars = get_derived_induction_variables(basic_ind_vars, loop.blocks, reaching_definitions);
         console.log(basic_ind_vars);
         console.log(derived_ind_vars);
     }

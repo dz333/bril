@@ -36,6 +36,7 @@ export interface ValueOperation {
   op: "add" | "mul" | "sub" | "div" |
       "id" | "nop" |
       "eq" | "lt" | "gt" | "ge" | "le" | "not" | "and" | "or" |
+      "ptreq" | "ptrlt" | "ptrgt" | "ptrge" | "ptrle" |
       "load" | "ptradd";
   args: Ident[];
   dest: Ident;

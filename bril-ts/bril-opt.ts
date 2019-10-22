@@ -352,18 +352,25 @@ function getCanReachHelper(node:CFGNode, explored:HashSet<CFGNode>) {
   }
 }
 
+export interface Loop {
+  blocks: HashSet<CFGNode>,
+  entry: CFGNode
+}
 /**
  * 
  * @param cfg 
  * @param doms 
  */
-export function findNaturalLoops(cfg: CFGNode[], doms:DominatorMap) {
+export function findNaturalLoops(cfg: CFGNode[], doms:DominatorMap): Loop[]{
   let backEdges = getBackEdges(cfg, doms);
   let loops = []
   for (let be of backEdges) {
     //remove be.to from Graph
     //find nodes that can reach be.from
-    let loop = getCanReach(be.from, be.to);
+    let loop = {
+      blocks: getCanReach(be.from, be.to),
+      entry: be.to
+    }
     loops.push(loop);
   }
   return loops;
