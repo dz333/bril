@@ -341,8 +341,8 @@ function evalFunc(func: bril.Function, heap: Heap<Value>): ProfilingResult {
   let num_insns_executed = 0;
   for (let i = 0; i < func.instrs.length; ++i) {
     let line = func.instrs[i];
-    num_insns_executed++;
     if ('op' in line) {
+      num_insns_executed++;
       let action = evalInstr(line, env, heap);
 
       if ('label' in action) {
@@ -369,7 +369,7 @@ function evalProg(prog: bril.Program): ProfilingResult {
   let result = { instructionCount: -1 }
   for (let func of prog.functions) {
     if (func.name === "main") {
-      let result = evalFunc(func, heap);
+      result = evalFunc(func, heap);
     }
   }
   if (!heap.isEmpty()) {
@@ -388,7 +388,7 @@ async function main() {
     [ '-ic', '--instructionCount' ],
     {
       help: 'The dynamic count of Bril instructions that were executed',
-      required: false
+      action: 'storeTrue'
     }
   );
   let args = parser.parseArgs();
