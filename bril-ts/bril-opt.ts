@@ -381,7 +381,7 @@ export interface Loop {
  */
 export function findNaturalLoops(cfg: CFGNode[], doms:DominatorMap): Loop[]{
   let backEdges = getBackEdges(cfg, doms);
-  let loops = []
+  let loops:HashMap<CFGNode, Loop> = HashMap.empty();
   for (let be of backEdges) {
     //remove be.to from Graph
     //find nodes that can reach be.from
@@ -389,9 +389,19 @@ export function findNaturalLoops(cfg: CFGNode[], doms:DominatorMap): Loop[]{
       blocks: getCanReach(be.from, be.to),
       entry: be.to
     }
-    loops.push(loop);
+    //now collapse loops that have the same entry point
+    if (loops.containsKey(loop.entry)) {
+      let curLoop = loops.get(loop.entry).getOrThrow();
+      curLoop.blocks = curLoop.blocks.addAll(loop.blocks);
+    } else {
+      loops = loops.put(loop.entry, loop);
+    }
   }
-  return loops;
+  let result: Loop[] = [];
+  for (let [k, v] of loops) {
+    result.push(v);
+  }
+  return result;
 }
 
 /*
