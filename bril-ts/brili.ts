@@ -3,9 +3,13 @@ import * as bril from './bril';
 import { Heap, Key } from './heap';
 import {readStdin, unreachable} from './util';
 import { ArgumentParser } from 'argparse';
+import { HashMap } from 'prelude-ts';
+import { Hash } from 'crypto';
+import { exitLabel } from './cfg-defs';
 
 interface ProfilingResult {
   instructionCount: number
+  counts: HashMap<bril.OpCode, number>;
 }
 const argCounts: {[key in bril.OpCode]: number | null} = {
   add: 2,
@@ -339,11 +343,19 @@ function evalInstr(instr: bril.Instruction, env: Env, heap:Heap<Value>): Action 
 function evalFunc(func: bril.Function, heap: Heap<Value>): ProfilingResult {
   let env: Env = new Map();
   let num_insns_executed = 0;
+  let counts:HashMap<bril.OpCode, number> = HashMap.empty();
   for (let i = 0; i < func.instrs.length; ++i) {
     let line = func.instrs[i];
     if ('op' in line) {
       num_insns_executed++;
       let action = evalInstr(line, env, heap);
+      let op = line.op as bril.OpCode;
+      let existing = counts.get(op);
+      if (existing.isNone()) {
+        counts = counts.put(op, 1);
+      } else {
+        counts = counts.put(op, existing.get() + 1);
+      }
 
       if ('label' in action) {
         // Search for the label and transfer control.
@@ -357,16 +369,16 @@ function evalFunc(func: bril.Function, heap: Heap<Value>): ProfilingResult {
           throw `label ${action.label} not found`;
         }
       } else if ('end' in action) {
-        return  { instructionCount: num_insns_executed };
+        return  { instructionCount: num_insns_executed, counts: counts };
       }
     }
   }
-  return { instructionCount: num_insns_executed };
+  return { instructionCount: num_insns_executed, counts: counts };
 }
 
 function evalProg(prog: bril.Program): ProfilingResult {
   let heap = new Heap<Value>()
-  let result = { instructionCount: -1 }
+  let result: ProfilingResult = { instructionCount: -1, counts: HashMap.empty() }
   for (let func of prog.functions) {
     if (func.name === "main") {
       result = evalFunc(func, heap);
@@ -396,6 +408,7 @@ async function main() {
   let profileResults = evalProg(prog);
   if (args.instructionCount) {
     console.log("Executed " + profileResults.instructionCount + " intructions.");
+    console.log(profileResults.counts);
   }
 }
 

@@ -1,15 +1,24 @@
 main {
-  size: int = const 8;
+  size: int = const 3;
   one: int = const 1;
   a: ptr<int> = alloc size;
   i: int = const 0;
-  result: int = const 7;
+  tmp: int = const 7;
+  store a tmp;
+  tmp: int = const 7;
+  a1: ptr<int> = ptradd a one;
+  store a1 tmp;
+  a2: ptr<int> = ptradd a1 one;
+  store a2 tmp;
+  result: int = const 0;
 check:
   cond: bool = lt i size;
   br cond loop end;
 loop:
   ptra: ptr<int> = ptradd a i;
   i:int = add i one;
+  tmp: int = load ptra;
+  result:int = add result tmp;
   jmp check;
 end:
   print result;

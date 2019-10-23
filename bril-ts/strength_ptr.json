@@ -6,7 +6,7 @@
           "dest": "size",
           "op": "const",
           "type": "int",
-          "value": 8
+          "value": 3
         },
         {
           "dest": "one",
@@ -31,10 +31,65 @@
           "value": 0
         },
         {
-          "dest": "result",
+          "dest": "tmp",
           "op": "const",
           "type": "int",
           "value": 7
+        },
+        {
+          "args": [
+            "a",
+            "tmp"
+          ],
+          "op": "store"
+        },
+        {
+          "dest": "tmp",
+          "op": "const",
+          "type": "int",
+          "value": 7
+        },
+        {
+          "args": [
+            "a",
+            "one"
+          ],
+          "dest": "a1",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "args": [
+            "a1",
+            "tmp"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a1",
+            "one"
+          ],
+          "dest": "a2",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "args": [
+            "a2",
+            "tmp"
+          ],
+          "op": "store"
+        },
+        {
+          "dest": "result",
+          "op": "const",
+          "type": "int",
+          "value": 0
         },
         {
           "label": "check"
@@ -76,6 +131,23 @@
             "one"
           ],
           "dest": "i",
+          "op": "add",
+          "type": "int"
+        },
+        {
+          "args": [
+            "ptra"
+          ],
+          "dest": "tmp",
+          "op": "load",
+          "type": "int"
+        },
+        {
+          "args": [
+            "result",
+            "tmp"
+          ],
+          "dest": "result",
           "op": "add",
           "type": "int"
         },

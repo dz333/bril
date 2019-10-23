@@ -40,7 +40,7 @@ export interface ValueOperation {
       "load" | "ptradd";
   args: Ident[];
   dest: Ident;
-  type: Type;
+  type: Type|PointerType;
 }
 
 export interface PointerValueOperation {

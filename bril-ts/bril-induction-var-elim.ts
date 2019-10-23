@@ -176,7 +176,7 @@ function replace_ind_vars(is_ptr:boolean, basic_var: string, a_var: string, b_va
                     let ret_var = mul_var;
                     if (b_var.isSome()) {
                         let add_var = gen_fresh_vars();
-                        let add_instr: bril.ValueInstruction = {op:is_ptr ? "ptradd" : "add", args:[b_var.get(), mul_var], type:is_ptr ? "ptr" : "int", dest:add_var};    
+                        let add_instr: bril.ValueInstruction = {op:is_ptr ? "ptradd" : "add", args:[b_var.get(), mul_var], type:is_ptr ? {"ptr":"int"} : "int", dest:add_var};    
                         header_instrs.push(add_instr);
                         ret_var = add_var;
                     }
@@ -237,7 +237,7 @@ function strength_reduction(is_ptr:boolean, dest: string, gen_fresh_vars: () => 
         instrs = instrs.concat(a_instrs).concat(b_instrs);
         let tmp_var_2 = gen_fresh_vars();
         let mul_instr: bril.ValueInstruction = {op:"mul", dest:tmp_var_2, type:"int", args:[ind_var.var_name, a_var]};
-        let add_instr: bril.ValueInstruction = {op:is_ptr ? "ptradd" : "add", dest:tmp_var, type:is_ptr ? "ptr" : "int", args:[b_var, tmp_var_2]}
+        let add_instr: bril.ValueInstruction = {op:is_ptr ? "ptradd" : "add", dest:tmp_var, type:is_ptr ? {"ptr":"int"} : "int", args:[b_var, tmp_var_2]}
         instrs = instrs.concat(a_instrs).concat([mul_instr, add_instr]);
     }
     loop_header.setInstrs(instrs);
@@ -247,10 +247,10 @@ function strength_reduction(is_ptr:boolean, dest: string, gen_fresh_vars: () => 
         for (let instr of block.getInstrs()) {
             if (bril.isValueInstruction(instr)) {
                 if (instr.dest == dest) {
-                    result_instrs.push({op:"id", args:[tmp_var], dest:dest, type:is_ptr ? "ptr" : "int"});
+                    result_instrs.push({op:"id", args:[tmp_var], dest:dest, type:is_ptr ? {"ptr":"int"} : "int"});
                 } else if (instr.dest == ind_var.var_name) {
                     result_instrs.push(instr);
-                    result_instrs.push({op:is_ptr ? "ptradd" : "add", dest:tmp_var, type:is_ptr ? "ptr" : "int", args:[tmp_var, a_var]});
+                    result_instrs.push({op:is_ptr ? "ptradd" : "add", dest:tmp_var, type:is_ptr ? {"ptr":"int"} : "int", args:[tmp_var, a_var]});
                 } else {
                     result_instrs.push(instr);
                 }

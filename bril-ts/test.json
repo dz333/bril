@@ -9,7 +9,7 @@
           "dest": "size",
           "op": "const",
           "type": "int",
-          "value": 8
+          "value": 3
         },
         {
           "dest": "one",
@@ -34,10 +34,65 @@
           "value": 0
         },
         {
-          "dest": "result",
+          "dest": "tmp",
           "op": "const",
           "type": "int",
           "value": 7
+        },
+        {
+          "args": [
+            "a",
+            "tmp"
+          ],
+          "op": "store"
+        },
+        {
+          "dest": "tmp",
+          "op": "const",
+          "type": "int",
+          "value": 7
+        },
+        {
+          "args": [
+            "a",
+            "one"
+          ],
+          "dest": "a1",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "args": [
+            "a1",
+            "tmp"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a1",
+            "one"
+          ],
+          "dest": "a2",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "args": [
+            "a2",
+            "tmp"
+          ],
+          "op": "store"
+        },
+        {
+          "dest": "result",
+          "op": "const",
+          "type": "int",
+          "value": 0
         },
         {
           "op": "jmp",
@@ -74,7 +129,9 @@
             "__0"
           ],
           "dest": "ptra",
-          "type": "ptr"
+          "type": {
+            "ptr": "int"
+          }
         },
         {
           "args": [
@@ -88,11 +145,30 @@
         {
           "op": "ptradd",
           "dest": "__0",
-          "type": "ptr",
+          "type": {
+            "ptr": "int"
+          },
           "args": [
             "__0",
             "one"
           ]
+        },
+        {
+          "args": [
+            "ptra"
+          ],
+          "dest": "tmp",
+          "op": "load",
+          "type": "int"
+        },
+        {
+          "args": [
+            "result",
+            "tmp"
+          ],
+          "dest": "result",
+          "op": "add",
+          "type": "int"
         },
         {
           "op": "jmp",
@@ -134,7 +210,9 @@
         {
           "op": "ptradd",
           "dest": "__0",
-          "type": "ptr",
+          "type": {
+            "ptr": "int"
+          },
           "args": [
             "a",
             "__1"
@@ -155,7 +233,9 @@
             "a",
             "__2"
           ],
-          "type": "ptr",
+          "type": {
+            "ptr": "int"
+          },
           "dest": "__3"
         },
         {
