@@ -81,6 +81,10 @@ export function isOperation(i: Instruction): i is Operation {
   return i.op != "const";
 }
 
+export function isConstant(i: Instruction): i is Constant {
+  return i.op == "const";
+}
+
 /**
  * Both constants and value operations produce results.
  */

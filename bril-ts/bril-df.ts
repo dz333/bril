@@ -125,6 +125,10 @@ export let definedVars: DFAnalysis<string> = {
     transfer: addDefined
 }
 
+export function getInstructionAt(loc:Location): bril.Instruction {
+    return loc.block.getInstrs()[loc.index];
+}
+
 export interface Location {
     block: cfg.CFGNode,
     index: number

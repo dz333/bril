@@ -2,8 +2,7 @@ import * as bril from './bril';
 import { HashMap, HashSet, Option } from 'prelude-ts';
 import { getDominators, findNaturalLoops, Loop, addHeader, eliminateDeadCode } from './bril-opt';
 import { CFGNode, TerminatingBlock } from './cfg-defs';
-import { dfWorklist, liveVars, DFResult, written, setUnion, reachingDefinitions } from './bril-df';
-import { insert } from 'list';
+import { dfWorklist, DFResult, Definition, written, setUnion, getInstructionAt, reachingDefinitions } from './bril-df';
 
 export interface Ind_var_opt {
     op: "add" | "mul" | "ptradd" | "ptrconst" | "const";
@@ -11,44 +10,31 @@ export interface Ind_var_opt {
 };
 type induction_variable = {var_name:string, a:Ind_var_opt, b:Option<Ind_var_opt>}
 
-function is_loop_invariant(var_name: string, block:CFGNode, loop: HashSet<CFGNode>, reaching_definitions:DFResult<string>):boolean {
+function is_loop_invariant(var_name: string, block:CFGNode, loop: HashSet<CFGNode>, reaching_definitions:DFResult<Definition>):boolean {
     // a variable is loop invariant if it's reaching definitions are all outside of the loop
-    // or it is inside of the loop and it is a write to a constant
-    let exist_reaching_inside_block = false;
+    // or there is exactly one inside of the loop and it is a write to a constant
+    let defs:HashSet<Definition> = HashSet.empty();
     for (let loop_block of loop) {
-        let reaching_vars = reaching_definitions.ins.get(loop_block);
-        reaching_vars.map((reaching_vars) => {
-            for (let reaching_var of reaching_vars) {
-                if (reaching_var == var_name) {
-                    exist_reaching_inside_block = true;
-                }
-            }
+        let reaching_defs = reaching_definitions.ins.get(loop_block).getOrThrow().filter( d => {
+            return d.varName == var_name && loop.contains(d.loc.block);
         });
+        defs = defs.addAll(reaching_defs);
     }
-    for (let instr of block.getInstrs()) {
-        // overly optimistic
-        if (bril.isValueInstruction(instr) && instr.dest == var_name) {
-            exist_reaching_inside_block = true;
-        }
-    }
-    if (exist_reaching_inside_block) {
-        for (let loop_block of loop) {
-            for (let inst of loop_block.getInstrs()) {
-                // even if there are multiple constant writes inside of a loop,
-                // at any specific point in the loop the value will be loop invariant
-                if (bril.isValueInstruction(inst) && inst.dest == var_name && inst.op != "const") {
-                    // return false if there is a non-constant write to [var_name]
-                    return false;
-                }
+    if (!defs.isEmpty()) {
+        let def = defs.single();
+        if (def.isSome()) {
+            let inst = getInstructionAt(def.get().loc);
+            if (bril.isConstant(inst)) {
+                return true;
             }
         }
-        return true;
+        return false;
     } else {
         return true;
     }
 }
 
-function get_basic_induction_vars(loop: HashSet<CFGNode>, reaching_definitions: DFResult<string>): HashMap<string, [bril.ValueInstruction,induction_variable]> {
+function get_basic_induction_vars(loop: HashSet<CFGNode>, reaching_definitions: DFResult<Definition>): HashMap<string, [bril.ValueInstruction,induction_variable]> {
     let maybe_basic_ind_vars: HashMap<string, [bril.ValueInstruction, induction_variable][]> = HashMap.empty();
     // find constant variables
     // find instructions of the form v = add v const or v = ptradd v const
@@ -94,7 +80,8 @@ function get_basic_induction_vars(loop: HashSet<CFGNode>, reaching_definitions: 
     return basic_ind_vars;
 }
 
-function extract_derived_ind_var(instr: bril.ValueInstruction, block: CFGNode, basic_ind_vars: HashMap<string, [bril.ValueInstruction,induction_variable]>, loop: HashSet<CFGNode>, reaching_definitions: DFResult<string>): Option<induction_variable> {
+function extract_derived_ind_var(instr: bril.ValueInstruction, block: CFGNode,
+     basic_ind_vars: HashMap<string, [bril.ValueInstruction,induction_variable]>, loop: HashSet<CFGNode>, reaching_definitions: DFResult<Definition>): Option<induction_variable> {
     if (instr.op == "add" || instr.op == "mul" || instr.op == "ptradd") {
          // one arg is induction variable, one arg is loop invariant
         for (let i = 0; i < instr.args.length; i++) {
@@ -135,7 +122,9 @@ function extract_derived_ind_var(instr: bril.ValueInstruction, block: CFGNode, b
     return Option.none();
 }
 
-function get_derived_induction_variables(basic_ind_vars: HashMap<string, [bril.ValueInstruction,induction_variable]>, loop: HashSet<CFGNode>, reaching_definitions: DFResult<string>): HashMap<string, [bril.ValueInstruction,induction_variable]> {
+function get_derived_induction_variables(
+    basic_ind_vars: HashMap<string, [bril.ValueInstruction,induction_variable]>,
+     loop: HashSet<CFGNode>, reaching_definitions: DFResult<Definition>): HashMap<string, [bril.ValueInstruction,induction_variable]> {
     let derived_ind_vars:HashMap<string, [bril.ValueInstruction, induction_variable]> = HashMap.empty();
     for (let block of loop) {
         for (let instr of block.getInstrs()) {
@@ -166,7 +155,8 @@ function get_derived_induction_variables(basic_ind_vars: HashMap<string, [bril.V
 //     return basic_ind_var_equivalence_classes;
 // }
 
-function replace_ind_vars(is_ptr:boolean, basic_var: string, a_var: string, b_var:Option<string>, derived_var:string, gen_fresh_vars:() => string, loop_header:CFGNode, loop: Loop, reaching_definitions: DFResult<string>) {
+function replace_ind_vars(is_ptr:boolean, basic_var: string, a_var: string, b_var:Option<string>,
+     derived_var:string, gen_fresh_vars:() => string, loop_header:CFGNode, loop: Loop, reaching_definitions: DFResult<Definition>) {
     // i = i + c; i -> i,c,0
     
     // i < n
@@ -276,7 +266,7 @@ function strength_reduction(is_ptr:boolean, dest: string, gen_fresh_vars: () => 
 export function eliminateInductionVars(func: CFGNode[]) {
     let dominators = getDominators(func[0]);
     let loops = findNaturalLoops(func, dominators);
-    let reaching_definitions = dfWorklist(func, liveVars);
+    let reaching_definitions = dfWorklist(func, reachingDefinitions);
     let defined: HashSet<string> = HashSet.empty();
     for (let block of func) {
         defined = setUnion([defined, written(block)]);
