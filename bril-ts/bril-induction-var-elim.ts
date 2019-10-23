@@ -287,8 +287,6 @@ export function eliminateInductionVars(func: CFGNode[]) {
     for (let loop of loops) {
         let basic_ind_vars = get_basic_induction_vars(loop.blocks, reaching_definitions);
         let derived_ind_vars = get_derived_induction_variables(basic_ind_vars, loop.blocks, reaching_definitions);
-        console.log(basic_ind_vars);
-        console.log(derived_ind_vars);
         let block:TerminatingBlock = {
             name: loop.entry.name + "_preentry",
             idx: 0,
