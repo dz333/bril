@@ -1,0 +1,24 @@
+main {
+  max: int = const 30;
+  t: int = const 14;
+  one: int = const 1;
+  two: int = const 2;
+  result: int = const 0;
+  i: int = const 0;
+check:
+  cond: bool = lt i max;
+  br cond loop end;
+loop:
+  odd: bool = lt i t;
+  br odd ifodd ifeven;
+ifodd:
+  i:int = add i two;
+  result:int = mul two result;
+  jmp check;
+ifeven:
+  i:int = add i one;
+  result:int = add one result;
+  jmp check;
+end:
+  print result;
+}

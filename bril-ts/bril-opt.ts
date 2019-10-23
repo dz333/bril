@@ -6,6 +6,16 @@ import { AnonymousBlock, BasicBlock, entryLabel, exitLabel,
 import * as df from './bril-df';
 
 
+function freshName(prefix:string, used:HashSet<string>) {
+  let name = "";
+  let counter = 0;
+  do {
+    name = prefix + "_" + counter;
+    counter += 1;
+  } while (used.contains(name))
+  return name;
+}
+
 function isTerminator(instr: bril.Instruction): instr is bril.EffectOperation {
   if ('op' in instr) {
     return ["br", "jmp", "ret"].includes(instr.op);
@@ -13,6 +23,15 @@ function isTerminator(instr: bril.Instruction): instr is bril.EffectOperation {
   return false; 
 }
 
+function getUsedLabels(func: bril.Function) {
+  let result: HashSet<string> = HashSet.empty();
+  for (let instr of func.instrs) {
+    if ('label' in instr) {
+      result = result.add(instr.label);
+    }
+  }
+  return result;
+}
 /**
  * Creates an ordered list of blocks from the given
  * Bril progrm, for the specified function, only.
@@ -28,8 +47,8 @@ export function createBasicBlocks(fname: string, prog: bril.Program) {
   //only add basic blocks if they were labeled
   //or had some instructions in them. If they
   //had instructions but no label, give them a fresh label
-  function addBlock(block: AnonymousBlock) {
-    let name = (block.name == null) ? getBlockName(block.idx) : block.name;
+  function addBlock(block: AnonymousBlock, usedNames: HashSet<string>) {
+    let name = (block.name == null) ? freshName("__block", usedNames) : block.name;
     let newBlock =  {
       name : name,
       idx : block.idx,
@@ -38,41 +57,40 @@ export function createBasicBlocks(fname: string, prog: bril.Program) {
     if (block.name == null) {
       if (!isEmpty(block)) {
         blocks.push(newBlock);
+        return usedNames.add(newBlock.name);
       } else {
-        return;
+        return usedNames;
       }
     } else {
       blocks.push(newBlock);
+      return usedNames.add(newBlock.name);
     }
   }
-
   let cur_block: AnonymousBlock = {name: null, instrs: [], idx: idx}
+  let usedNames:HashSet<string> = HashSet.empty();
   for (let func of prog.functions) {
     if (func.name === fname) {
+      usedNames = getUsedLabels(func);
       for (let instr of func.instrs) {
         if ('label' in instr) {
-          addBlock(cur_block);
+          usedNames = addBlock(cur_block, usedNames);
           idx += 1
           cur_block = { name: instr.label, instrs: [], idx: idx}
         } else if (isTerminator(instr)) {
           cur_block.instrs.push(instr)
-          addBlock(cur_block);
+          usedNames = addBlock(cur_block, usedNames);
           idx += 1
           cur_block = { name: null, instrs: [], idx: idx }
         } else {
           cur_block.instrs.push(instr)
         }
       }
-      addBlock(cur_block);
+      usedNames = addBlock(cur_block, usedNames);
     }
   }
   blocks.unshift( { name: entryLabel, idx: -1, instrs: [] } );
   blocks.push( {name: exitLabel, idx: blocks.length, instrs:[]} )
   return blocks;
-}
-
-function getBlockName(idx: number): string {
-  return "__block" + idx + "__";
 }
 
 function castToTerminator(i: bril.Instruction): bril.EffectOperation {
@@ -487,10 +505,19 @@ function eliminateKilledLocals(node: CFGNode, liveOuts: HashSet<string>) {
  */
 export function cfgToBril(fname: string, nodes: CFGNode[]): bril.Function {
   let instrs:(bril.Instruction | bril.Label)[] = [];
+  let retInstr:bril.Instruction = {op: "ret", args:[]};
   for (let n of nodes) {
+    if (n.name == entryLabel || n.name == exitLabel) {
+      continue; //don't need to synthesize this
+    }
     instrs.push( { label: n.name } );
     instrs = instrs.concat(n.getInstrs());
-    instrs.push(n.getTerminator());
+    let succLabels = n.getSuccessors().map( v => {return v.name});
+    if (succLabels.contains(exitLabel)) {
+      instrs.push(retInstr);
+    } else {
+      instrs.push(n.getTerminator());
+    }
   }
   return { name: fname, instrs: instrs };
 }
