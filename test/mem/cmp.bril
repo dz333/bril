@@ -1,0 +1,17 @@
+main {
+  inc: int = const 1;
+  v: int = const 1000000;
+  max: int = const 1000000;
+  p: ptr<int> = alloc v;
+  pcopy: ptr<int> = id p;
+  endp: ptr<int> = ptradd p max;
+lbl:
+  store p v;
+  val: int = load p;
+  p: ptr<int> = ptradd p inc;
+  loop: bool = ptrge p endp;
+  br loop end lbl;
+end:
+  free pcopy;
+  print p;
+}

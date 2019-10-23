@@ -1,0 +1,16 @@
+main {
+  max: int = const 30;
+  one: int = const 1;
+  result: int = const 0;
+  i: int = const 0;
+check:
+  cond: bool = lt i max;
+  br cond loop end;
+loop:
+  i:int = add i one;
+  tmp:int = mul max i;
+  result:int = add tmp result;
+  jmp check;
+end:
+  print result;
+}

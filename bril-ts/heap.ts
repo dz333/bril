@@ -15,6 +15,35 @@ export class Key {
     add(offset:number) {
         return new Key(this.base, this.offset + offset);
     }
+
+    private static checkbase(a:Key, b:Key) {
+        if (a.base != b.base) { throw `can't compare pointers from different allocations!`}
+    }
+
+    lt(other:Key) {
+        Key.checkbase(this, other);
+        return this.offset < other.offset;
+    }
+
+    le(other:Key) {
+        Key.checkbase(this, other);
+        return this.offset <= other.offset;
+    }
+
+    gt(other:Key) {
+        Key.checkbase(this, other);
+        return this.offset > other.offset;
+    }
+
+    ge(other:Key) {
+        Key.checkbase(this, other);
+        return this.offset >= other.offset;
+    }
+
+    eq(other:Key) {
+        Key.checkbase(this, other);
+        return this.offset == other.offset;
+    }
 }
 
 /**

@@ -2,7 +2,11 @@
 import * as bril from './bril';
 import { Heap, Key } from './heap';
 import {readStdin, unreachable} from './util';
+import { ArgumentParser } from 'argparse';
 
+interface ProfilingResult {
+  instructionCount: number
+}
 const argCounts: {[key in bril.OpCode]: number | null} = {
   add: 2,
   mul: 2,
@@ -17,6 +21,11 @@ const argCounts: {[key in bril.OpCode]: number | null} = {
   not: 1,
   and: 2,
   or: 2,
+  ptrlt: 2,
+  ptrle: 2,
+  ptrgt: 2,
+  ptrge: 2,
+  ptreq: 2,
   print: null,  // Any number of arguments.
   br: 3,
   jmp: 1,
@@ -174,8 +183,20 @@ function evalInstr(instr: bril.Instruction, env: Env, heap:Heap<Value>): Action 
     return NEXT;
   }
 
+  case "ptrle": {
+    let val = getPtr(instr, env, 0).loc.le(getPtr(instr, env, 1).loc)
+    env.set(instr.dest, val);
+    return NEXT;
+  }
+
   case "lt": {
     let val = getInt(instr, env, 0) < getInt(instr, env, 1);
+    env.set(instr.dest, val);
+    return NEXT;
+  }
+
+  case "ptrlt": {
+    let val = getPtr(instr, env, 0).loc.lt(getPtr(instr, env, 1).loc)
     env.set(instr.dest, val);
     return NEXT;
   }
@@ -186,14 +207,32 @@ function evalInstr(instr: bril.Instruction, env: Env, heap:Heap<Value>): Action 
     return NEXT;
   }
 
+  case "ptrgt": {
+    let val = getPtr(instr, env, 0).loc.gt(getPtr(instr, env, 1).loc)
+    env.set(instr.dest, val);
+    return NEXT;
+  }
+
   case "ge": {
     let val = getInt(instr, env, 0) >= getInt(instr, env, 1);
     env.set(instr.dest, val);
     return NEXT;
   }
 
+  case "ptrge": {
+    let val = getPtr(instr, env, 0).loc.ge(getPtr(instr, env, 1).loc)
+    env.set(instr.dest, val);
+    return NEXT;
+  }
+
   case "eq": {
     let val = getInt(instr, env, 0) === getInt(instr, env, 1);
+    env.set(instr.dest, val);
+    return NEXT;
+  }
+
+  case "ptreq": {
+    let val = getPtr(instr, env, 0).loc.eq(getPtr(instr, env, 1).loc)
     env.set(instr.dest, val);
     return NEXT;
   }
@@ -297,13 +336,13 @@ function evalInstr(instr: bril.Instruction, env: Env, heap:Heap<Value>): Action 
   throw `unhandled opcode ${(instr as any).op}`;
 }
 
-function evalFunc(func: bril.Function, heap: Heap<Value>): number {
+function evalFunc(func: bril.Function, heap: Heap<Value>): ProfilingResult {
   let env: Env = new Map();
   let num_insns_executed = 0;
   for (let i = 0; i < func.instrs.length; ++i) {
     let line = func.instrs[i];
-    num_insns_executed++;
     if ('op' in line) {
+      num_insns_executed++;
       let action = evalInstr(line, env, heap);
 
       if ('label' in action) {
@@ -318,29 +357,46 @@ function evalFunc(func: bril.Function, heap: Heap<Value>): number {
           throw `label ${action.label} not found`;
         }
       } else if ('end' in action) {
-        return num_insns_executed;
+        return  { instructionCount: num_insns_executed };
       }
     }
   }
-  return num_insns_executed;
+  return { instructionCount: num_insns_executed };
 }
 
-function evalProg(prog: bril.Program) {
+function evalProg(prog: bril.Program): ProfilingResult {
   let heap = new Heap<Value>()
+  let result = { instructionCount: -1 }
   for (let func of prog.functions) {
     if (func.name === "main") {
-      let num_insns_exectuted = evalFunc(func, heap);
-      console.log("Executed " + num_insns_exectuted + " intructions.");
+      result = evalFunc(func, heap);
     }
   }
   if (!heap.isEmpty()) {
     throw `Some memory locations have not been freed by end of execution.`
   }
+  return result;
 }
 
 async function main() {
+  let parser = new ArgumentParser({
+    version: '0.0.1',
+    addHelp:true,
+    description: 'Executes Bril Programs'
+  });
+  parser.addArgument(
+    [ '-ic', '--instructionCount' ],
+    {
+      help: 'The dynamic count of Bril instructions that were executed',
+      action: 'storeTrue'
+    }
+  );
+  let args = parser.parseArgs();
   let prog = JSON.parse(await readStdin()) as bril.Program;
-  evalProg(prog);
+  let profileResults = evalProg(prog);
+  if (args.instructionCount) {
+    console.log("Executed " + profileResults.instructionCount + " intructions.");
+  }
 }
 
 // Make unhandled promise rejections terminate.
