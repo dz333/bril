@@ -1,0 +1,173 @@
+{
+  "functions": [
+    {
+      "instrs": [
+        {
+          "label": "__entry__"
+        },
+        {
+          "op": "jmp",
+          "args": [
+            "__block0__"
+          ]
+        },
+        {
+          "label": "__block0__"
+        },
+        {
+          "dest": "max",
+          "op": "const",
+          "type": "int",
+          "value": 30
+        },
+        {
+          "dest": "one",
+          "op": "const",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "dest": "result",
+          "op": "const",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "dest": "i",
+          "op": "const",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "op": "jmp",
+          "args": [
+            "check_preentry"
+          ]
+        },
+        {
+          "label": "check"
+        },
+        {
+          "op": "lt",
+          "args": [
+            "__1",
+            "__2"
+          ],
+          "type": "int",
+          "dest": "cond"
+        },
+        {
+          "op": "br",
+          "args": [
+            "cond",
+            "loop",
+            "end"
+          ]
+        },
+        {
+          "label": "loop"
+        },
+        {
+          "op": "id",
+          "args": [
+            "__1"
+          ],
+          "dest": "tmp",
+          "type": "int"
+        },
+        {
+          "args": [
+            "result",
+            "tmp"
+          ],
+          "dest": "result",
+          "op": "add",
+          "type": "int"
+        },
+        {
+          "args": [
+            "i",
+            "one"
+          ],
+          "dest": "i",
+          "op": "add",
+          "type": "int"
+        },
+        {
+          "op": "add",
+          "dest": "__1",
+          "type": "int",
+          "args": [
+            "__1",
+            "__0"
+          ]
+        },
+        {
+          "op": "jmp",
+          "args": [
+            "check"
+          ]
+        },
+        {
+          "label": "end"
+        },
+        {
+          "args": [
+            "result"
+          ],
+          "op": "print"
+        },
+        {
+          "op": "jmp",
+          "args": [
+            "__exit__"
+          ]
+        },
+        {
+          "label": "__exit__"
+        },
+        {
+          "op": "ret",
+          "args": []
+        },
+        {
+          "label": "check_preentry"
+        },
+        {
+          "op": "mul",
+          "dest": "__0",
+          "type": "int",
+          "args": [
+            "max",
+            "one"
+          ]
+        },
+        {
+          "op": "mul",
+          "dest": "__1",
+          "type": "int",
+          "args": [
+            "i",
+            "__0"
+          ]
+        },
+        {
+          "op": "mul",
+          "args": [
+            "max",
+            "__0"
+          ],
+          "type": "int",
+          "dest": "__2"
+        },
+        {
+          "op": "jmp",
+          "args": [
+            "check"
+          ]
+        }
+      ],
+      "name": "main"
+    }
+  ]
+}

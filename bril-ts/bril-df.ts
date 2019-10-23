@@ -68,7 +68,7 @@ export function dfWorklist<T>(blocks: cfg.CFGNode[], analysis: DFAnalysis<T>): D
     }
 }
 
-function setUnion<T>(sets: HashSet<T>[]): HashSet<T> {
+export function setUnion<T>(sets: HashSet<T>[]): HashSet<T> {
     let result: HashSet<T> = HashSet.empty();
     for (let s of sets) {
         result = result.addAll(s.toVector());
@@ -77,7 +77,7 @@ function setUnion<T>(sets: HashSet<T>[]): HashSet<T> {
 }
 
 // returns the set of variables in a block that are written to
-function written(block: cfg.CFGNode): HashSet<string> {
+export function written(block: cfg.CFGNode): HashSet<string> {
     let result: HashSet<string> = HashSet.empty();
     for (let inst of block.getInstrs()) {
         if (bril.isValueInstruction(inst)) {

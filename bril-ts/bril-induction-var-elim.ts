@@ -1,12 +1,12 @@
 import * as bril from './bril';
 import { HashMap, HashSet, Option } from 'prelude-ts';
-import { getDominators, findNaturalLoops } from './bril-opt';
-import { CFGNode } from './cfg-defs';
-import { dfWorklist, liveVars, DFResult } from './bril-df';
+import { getDominators, findNaturalLoops, Loop, addHeader } from './bril-opt';
+import { CFGNode, TerminatingBlock } from './cfg-defs';
+import { dfWorklist, liveVars, DFResult, written, setUnion, reachingDefinitions } from './bril-df';
 import { insert } from 'list';
 
 export interface Ind_var_opt {
-    op: "add" | "mul" | "const";
+    op: "add" | "mul" | "ptradd" | "ptrconst" | "const";
     arg: Ind_var_opt[] | string
 };
 type induction_variable = {var_name:string, a:Ind_var_opt, b:Option<Ind_var_opt>}
@@ -68,11 +68,11 @@ function get_basic_induction_vars(loop: HashSet<CFGNode>, reaching_definitions: 
                         if (all_loop_inv) {
                             let instrs_option = maybe_basic_ind_vars.get(instr.dest);
                             if (instrs_option.isNone()) {
-                                let ind_var:induction_variable = {var_name:instr.dest, a:{op:"const", arg: other_args[0]}, b:Option.none()};
+                                let ind_var:induction_variable = {var_name:instr.dest, a:{op:instr.op == "add" ? "const" : "ptrconst", arg: other_args[0]}, b:Option.none()};
                                 maybe_basic_ind_vars = maybe_basic_ind_vars.put(instr.dest, [[instr,ind_var]]); 
                             } else if (instrs_option.isSome()) {
                                 let instrs = instrs_option.get();
-                                let ind_var:induction_variable = {var_name:instr.dest, a:{op:"const", arg: other_args[0]}, b:Option.none()};
+                                let ind_var:induction_variable = {var_name:instr.dest, a:{op:instr.op == "add" ? "const" : "ptrconst", arg: other_args[0]}, b:Option.none()};
                                 instrs.push([instr,ind_var]);
                                 maybe_basic_ind_vars = maybe_basic_ind_vars.put(instr.dest, instrs);
                             }
@@ -135,14 +135,14 @@ function extract_derived_ind_var(instr: bril.ValueInstruction, block: CFGNode, b
     return Option.none();
 }
 
-function get_derived_induction_variables(basic_ind_vars: HashMap<string, [bril.ValueInstruction,induction_variable]>, loop: HashSet<CFGNode>, reaching_definitions: DFResult<string>) {
-    let derived_ind_vars:HashMap<string, induction_variable> = HashMap.empty();
+function get_derived_induction_variables(basic_ind_vars: HashMap<string, [bril.ValueInstruction,induction_variable]>, loop: HashSet<CFGNode>, reaching_definitions: DFResult<string>): HashMap<string, [bril.ValueInstruction,induction_variable]> {
+    let derived_ind_vars:HashMap<string, [bril.ValueInstruction, induction_variable]> = HashMap.empty();
     for (let block of loop) {
         for (let instr of block.getInstrs()) {
             if (bril.isValueInstruction(instr)) {
                 let derived_ind_var = extract_derived_ind_var(instr, block, basic_ind_vars, loop, reaching_definitions);
                 if (derived_ind_var.isSome()) {
-                    derived_ind_vars = derived_ind_vars.put(instr.dest, derived_ind_var.get());
+                    derived_ind_vars = derived_ind_vars.put(instr.dest, [instr, derived_ind_var.get()]);
                 }
             }
         }
@@ -166,23 +166,63 @@ function get_derived_induction_variables(basic_ind_vars: HashMap<string, [bril.V
 //     return basic_ind_var_equivalence_classes;
 // }
 
-function replace_ind_vars() {
+function replace_ind_vars(basic_var: string, a_var: string, b_var:Option<string>, derived_var:string, gen_fresh_vars:() => string, loop_header:CFGNode, loop: Loop, reaching_definitions: DFResult<string>) {
     // i = i + c; i -> i,c,0
     
     // i < n
+    // t = c*n + d
     // k < c*n + d
+    let header_instrs = loop_header.getInstrs();
+    for (let block of loop.blocks) {
+
+        let result_instrs: bril.Instruction[] = [];
+        for (let instr of block.getInstrs()) {
+            if (instr.op == "lt" && instr.args.indexOf(basic_var) != -1) {
+                let n = instr.args[1-instr.args.indexOf(basic_var)];
+                if (is_loop_invariant(n, block, loop.blocks, reaching_definitions)) {
+                    let mul_var = gen_fresh_vars();
+                    let mul_instr: bril.ValueInstruction = {op:"mul", args:[n, a_var], type:"int", dest:mul_var};
+                    header_instrs.push(mul_instr);
+                    let ret_var = mul_var;
+                    if (b_var.isSome()) {
+                        let add_var = gen_fresh_vars();
+                        let add_instr: bril.ValueInstruction = {op:"add", args:[mul_var, b_var.get()], type:"int", dest:add_var};    
+                        header_instrs.push(add_instr);
+                        ret_var = add_var;
+                    }
+                    let new_comp: bril.ValueInstruction = {op:"lt", args:[derived_var, ret_var], type:"int", dest:instr.dest};
+                    result_instrs.push(new_comp);
+                } else {
+                    result_instrs.push(instr);
+                }
+            } else {
+                result_instrs.push(instr);
+            }
+        }
+        block.setInstrs(result_instrs);
+    }
+
 }
 
-let fresh_var = 0;
+function fresh_vars(existing: HashSet<string>) {
+    let fresh_var = 0;
+    return () => {
+        let new_var = "__"+(fresh_var++);
+        while(existing.contains(new_var)) {
+            new_var = "__"+(fresh_var++);
+        }
+        return new_var;
+    }
+}
 
-function gen_instrs_from_ind_var_opt(opt: Ind_var_opt): [string, bril.ValueInstruction[]] {
+function gen_instrs_from_ind_var_opt(opt: Ind_var_opt, gen_fresh_vars: () => string): [string, bril.ValueInstruction[]] {
     if (typeof opt.arg  === "string") {
         return [opt.arg, []];
     } else {
-        if (opt.op == "add" || opt.op == "mul") {
-            let [left_dest, left_instrs] = gen_instrs_from_ind_var_opt(opt.arg[0])
-            let [right_dest, right_instrs] = gen_instrs_from_ind_var_opt(opt.arg[1])
-            let tmp_var = "__"+(fresh_var++);
+        if (opt.op == "add" || opt.op == "mul" || opt.op == "ptradd") {
+            let [left_dest, left_instrs] = gen_instrs_from_ind_var_opt(opt.arg[0], gen_fresh_vars)
+            let [right_dest, right_instrs] = gen_instrs_from_ind_var_opt(opt.arg[1], gen_fresh_vars)
+            let tmp_var = gen_fresh_vars();
             return [tmp_var, left_instrs.concat(right_instrs).concat([{op:opt.op, dest:tmp_var, type:"int", args:[left_dest, right_dest]}]) ]
         } else {
             throw "Invalid ind var opt"
@@ -190,23 +230,78 @@ function gen_instrs_from_ind_var_opt(opt: Ind_var_opt): [string, bril.ValueInstr
     }
 }
 
-function strength_reduction(ind_var: induction_variable, loop: Loop) {
+function strength_reduction(dest: string, gen_fresh_vars: () => string, ind_var: induction_variable, loop: Loop, loop_header:CFGNode): [string, Option<string>, string] {
     // k = i + d; k -> i,c,d
     // t = i*c + d
     // k = t
     // t = t + c
+    let instrs = loop_header.getInstrs();
+    let [a_var, a_instrs] = gen_instrs_from_ind_var_opt(ind_var.a, gen_fresh_vars);
+    let tmp_var = gen_fresh_vars();
+    let ret_b_var: Option<string> = Option.none();
+    if (ind_var.b.isNone()) {
+        instrs = instrs.concat(a_instrs).concat([{op:"mul", dest:tmp_var, type:"int", args:[ind_var.var_name, a_var]}]);
+    } else {
+        let [b_var, b_instrs] = gen_instrs_from_ind_var_opt(ind_var.b.get(), gen_fresh_vars);
+        ret_b_var = Option.some(b_var);
+        instrs = instrs.concat(a_instrs).concat(b_instrs);
+        let tmp_var_2 = gen_fresh_vars();
+        let mul_instr: bril.ValueInstruction = {op:"mul", dest:tmp_var_2, type:"int", args:[ind_var.var_name, a_var]};
+        let add_instr: bril.ValueInstruction = {op:"add", dest:tmp_var, type:"int", args:[tmp_var_2, b_var]}
+        instrs = instrs.concat(a_instrs).concat([mul_instr, add_instr]);
+    }
+    loop_header.setInstrs(instrs);
+
+    for (let block of loop.blocks) {
+        let result_instrs: bril.Instruction[] = [];
+        for (let instr of block.getInstrs()) {
+            if (bril.isValueInstruction(instr)) {
+                if (instr.dest == dest) {
+                    result_instrs.push({op:"id", args:[tmp_var], dest:dest, type:"int"});
+                } else if (instr.dest == ind_var.var_name) {
+                    result_instrs.push(instr);
+                    result_instrs.push({op:"add", dest:tmp_var, type:"int", args:[tmp_var, a_var]});
+                } else {
+                    result_instrs.push(instr);
+                }
+            } else {
+                result_instrs.push(instr);
+            }
+        }
+        block.setInstrs(result_instrs);
+    }
+    return [a_var, ret_b_var, tmp_var];
 }
 
 export function eliminateInductionVars(func: CFGNode[]) {
     let dominators = getDominators(func[0]);
     let loops = findNaturalLoops(func, dominators);
     let reaching_definitions = dfWorklist(func, liveVars);
+    let defined: HashSet<string> = HashSet.empty();
+    for (let block of func) {
+        defined = setUnion([defined, written(block)]);
+    }
+
+    let gen_fresh_vars = fresh_vars(defined);
 
     for (let loop of loops) {
         let basic_ind_vars = get_basic_induction_vars(loop.blocks, reaching_definitions);
         let derived_ind_vars = get_derived_induction_variables(basic_ind_vars, loop.blocks, reaching_definitions);
         console.log(basic_ind_vars);
         console.log(derived_ind_vars);
+        let block:TerminatingBlock = {
+            name: loop.entry.name + "_preentry",
+            idx: 0,
+            instrs: [],
+            termInstr: {op:"jmp", args:[loop.entry.name]}
+        };
+        let preentry = new CFGNode(block.name, block, HashSet.empty(), HashSet.empty());
+        addHeader(func, loop.entry, preentry, loop.blocks.remove(loop.entry));
+        func.push(preentry);
+        for (let [dest, [_, ind_var]] of derived_ind_vars) {
+            let [a_var, b_var, new_dest] = strength_reduction(dest, gen_fresh_vars, ind_var, loop, preentry);
+            replace_ind_vars(ind_var.var_name, a_var, b_var, new_dest, gen_fresh_vars, preentry, loop, reaching_definitions);
+        }
     }
 
 

@@ -388,10 +388,10 @@ export function findNaturalLoops(cfg: CFGNode[], doms:DominatorMap): Loop[]{
  * _backEdgeNodes_ is the set of predecessors of _entry_ which
  * should not enter the pre-header.
  */
-export function addHeader(prog: CFGNode[], entry: CFGNode, preHeader:CFGNode, backEdgeNodes:Set<CFGNode>) {
+export function addHeader(prog: CFGNode[], entry: CFGNode, preHeader:CFGNode, backEdgeNodes:HashSet<CFGNode>) {
   let preds = entry.getPredecessors();
   for (let p of preds) { //preds is immutable, we can update entry :)
-    if (!backEdgeNodes.has(p)) {
+    if (!backEdgeNodes.contains(p)) {
       p.replaceEdgeTo(entry, preHeader);
     }
   }
