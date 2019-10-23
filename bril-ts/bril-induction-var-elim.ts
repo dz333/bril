@@ -1,6 +1,6 @@
 import * as bril from './bril';
 import { HashMap, HashSet, Option } from 'prelude-ts';
-import { getDominators, findNaturalLoops, Loop, addHeader } from './bril-opt';
+import { getDominators, findNaturalLoops, Loop, addHeader, eliminateDeadCode } from './bril-opt';
 import { CFGNode, TerminatingBlock } from './cfg-defs';
 import { dfWorklist, liveVars, DFResult, written, setUnion, reachingDefinitions } from './bril-df';
 import { insert } from 'list';
@@ -166,7 +166,7 @@ function get_derived_induction_variables(basic_ind_vars: HashMap<string, [bril.V
 //     return basic_ind_var_equivalence_classes;
 // }
 
-function replace_ind_vars(basic_var: string, a_var: string, b_var:Option<string>, derived_var:string, gen_fresh_vars:() => string, loop_header:CFGNode, loop: Loop, reaching_definitions: DFResult<string>) {
+function replace_ind_vars(is_ptr:boolean, basic_var: string, a_var: string, b_var:Option<string>, derived_var:string, gen_fresh_vars:() => string, loop_header:CFGNode, loop: Loop, reaching_definitions: DFResult<string>) {
     // i = i + c; i -> i,c,0
     
     // i < n
@@ -186,11 +186,11 @@ function replace_ind_vars(basic_var: string, a_var: string, b_var:Option<string>
                     let ret_var = mul_var;
                     if (b_var.isSome()) {
                         let add_var = gen_fresh_vars();
-                        let add_instr: bril.ValueInstruction = {op:"add", args:[mul_var, b_var.get()], type:"int", dest:add_var};    
+                        let add_instr: bril.ValueInstruction = {op:is_ptr ? "ptradd" : "add", args:[b_var.get(), mul_var], type:is_ptr ? "ptr" : "int", dest:add_var};    
                         header_instrs.push(add_instr);
                         ret_var = add_var;
                     }
-                    let new_comp: bril.ValueInstruction = {op:"lt", args:[derived_var, ret_var], type:"int", dest:instr.dest};
+                    let new_comp: bril.ValueInstruction = {op:is_ptr ? "ptrlt" : "lt", args:[derived_var, ret_var], type:"bool", dest:instr.dest};
                     result_instrs.push(new_comp);
                 } else {
                     result_instrs.push(instr);
@@ -230,7 +230,7 @@ function gen_instrs_from_ind_var_opt(opt: Ind_var_opt, gen_fresh_vars: () => str
     }
 }
 
-function strength_reduction(dest: string, gen_fresh_vars: () => string, ind_var: induction_variable, loop: Loop, loop_header:CFGNode): [string, Option<string>, string] {
+function strength_reduction(is_ptr:boolean, dest: string, gen_fresh_vars: () => string, ind_var: induction_variable, loop: Loop, loop_header:CFGNode): [string, Option<string>, string] {
     // k = i + d; k -> i,c,d
     // t = i*c + d
     // k = t
@@ -247,7 +247,7 @@ function strength_reduction(dest: string, gen_fresh_vars: () => string, ind_var:
         instrs = instrs.concat(a_instrs).concat(b_instrs);
         let tmp_var_2 = gen_fresh_vars();
         let mul_instr: bril.ValueInstruction = {op:"mul", dest:tmp_var_2, type:"int", args:[ind_var.var_name, a_var]};
-        let add_instr: bril.ValueInstruction = {op:"add", dest:tmp_var, type:"int", args:[tmp_var_2, b_var]}
+        let add_instr: bril.ValueInstruction = {op:is_ptr ? "ptradd" : "add", dest:tmp_var, type:is_ptr ? "ptr" : "int", args:[b_var, tmp_var_2]}
         instrs = instrs.concat(a_instrs).concat([mul_instr, add_instr]);
     }
     loop_header.setInstrs(instrs);
@@ -257,10 +257,10 @@ function strength_reduction(dest: string, gen_fresh_vars: () => string, ind_var:
         for (let instr of block.getInstrs()) {
             if (bril.isValueInstruction(instr)) {
                 if (instr.dest == dest) {
-                    result_instrs.push({op:"id", args:[tmp_var], dest:dest, type:"int"});
+                    result_instrs.push({op:"id", args:[tmp_var], dest:dest, type:is_ptr ? "ptr" : "int"});
                 } else if (instr.dest == ind_var.var_name) {
                     result_instrs.push(instr);
-                    result_instrs.push({op:"add", dest:tmp_var, type:"int", args:[tmp_var, a_var]});
+                    result_instrs.push({op:is_ptr ? "ptradd" : "add", dest:tmp_var, type:is_ptr ? "ptr" : "int", args:[tmp_var, a_var]});
                 } else {
                     result_instrs.push(instr);
                 }
@@ -298,11 +298,10 @@ export function eliminateInductionVars(func: CFGNode[]) {
         let preentry = new CFGNode(block.name, block, HashSet.empty(), HashSet.empty());
         addHeader(func, loop.entry, preentry, loop.blocks.remove(loop.entry));
         func.push(preentry);
-        for (let [dest, [_, ind_var]] of derived_ind_vars) {
-            let [a_var, b_var, new_dest] = strength_reduction(dest, gen_fresh_vars, ind_var, loop, preentry);
-            replace_ind_vars(ind_var.var_name, a_var, b_var, new_dest, gen_fresh_vars, preentry, loop, reaching_definitions);
+        for (let [dest, [instr, ind_var]] of derived_ind_vars) {
+            let is_ptr = instr.op == "ptradd";
+            let [a_var, b_var, new_dest] = strength_reduction(is_ptr, dest, gen_fresh_vars, ind_var, loop, preentry);
+            replace_ind_vars(is_ptr, ind_var.var_name, a_var, b_var, new_dest, gen_fresh_vars, preentry, loop, reaching_definitions);
         }
     }
-
-
 }

@@ -1,0 +1,17 @@
+main {
+  size: int = const 8;
+  one: int = const 1;
+  a: ptr<int> = alloc size;
+  i: int = const 0;
+  result: int = const 7;
+check:
+  cond: bool = lt i size;
+  br cond loop end;
+loop:
+  ptra: ptr<int> = ptradd a i;
+  i:int = add i one;
+  jmp check;
+end:
+  print result;
+  free a;
+}

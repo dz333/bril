@@ -3,22 +3,13 @@
     {
       "instrs": [
         {
-          "label": "__entry__"
+          "label": "__block_0"
         },
         {
-          "op": "jmp",
-          "args": [
-            "__block0__"
-          ]
-        },
-        {
-          "label": "__block0__"
-        },
-        {
-          "dest": "max",
+          "dest": "size",
           "op": "const",
           "type": "int",
-          "value": 30
+          "value": 8
         },
         {
           "dest": "one",
@@ -27,16 +18,26 @@
           "value": 1
         },
         {
-          "dest": "result",
-          "op": "const",
-          "type": "int",
-          "value": 0
+          "args": [
+            "size"
+          ],
+          "dest": "a",
+          "op": "alloc",
+          "type": {
+            "ptr": "int"
+          }
         },
         {
           "dest": "i",
           "op": "const",
           "type": "int",
           "value": 0
+        },
+        {
+          "dest": "result",
+          "op": "const",
+          "type": "int",
+          "value": 7
         },
         {
           "op": "jmp",
@@ -48,12 +49,12 @@
           "label": "check"
         },
         {
-          "op": "lt",
+          "op": "ptrlt",
           "args": [
-            "__1",
-            "__2"
+            "__0",
+            "__3"
           ],
-          "type": "int",
+          "type": "bool",
           "dest": "cond"
         },
         {
@@ -70,19 +71,10 @@
         {
           "op": "id",
           "args": [
-            "__1"
+            "__0"
           ],
-          "dest": "tmp",
-          "type": "int"
-        },
-        {
-          "args": [
-            "result",
-            "tmp"
-          ],
-          "dest": "result",
-          "op": "add",
-          "type": "int"
+          "dest": "ptra",
+          "type": "ptr"
         },
         {
           "args": [
@@ -94,12 +86,12 @@
           "type": "int"
         },
         {
-          "op": "add",
-          "dest": "__1",
-          "type": "int",
+          "op": "ptradd",
+          "dest": "__0",
+          "type": "ptr",
           "args": [
-            "__1",
-            "__0"
+            "__0",
+            "one"
           ]
         },
         {
@@ -118,13 +110,10 @@
           "op": "print"
         },
         {
-          "op": "jmp",
           "args": [
-            "__exit__"
-          ]
-        },
-        {
-          "label": "__exit__"
+            "a"
+          ],
+          "op": "free"
         },
         {
           "op": "ret",
@@ -135,30 +124,39 @@
         },
         {
           "op": "mul",
-          "dest": "__0",
-          "type": "int",
-          "args": [
-            "max",
-            "one"
-          ]
-        },
-        {
-          "op": "mul",
           "dest": "__1",
           "type": "int",
           "args": [
             "i",
-            "__0"
+            "one"
+          ]
+        },
+        {
+          "op": "ptradd",
+          "dest": "__0",
+          "type": "ptr",
+          "args": [
+            "a",
+            "__1"
           ]
         },
         {
           "op": "mul",
           "args": [
-            "max",
-            "__0"
+            "size",
+            "one"
           ],
           "type": "int",
           "dest": "__2"
+        },
+        {
+          "op": "ptradd",
+          "args": [
+            "a",
+            "__2"
+          ],
+          "type": "ptr",
+          "dest": "__3"
         },
         {
           "op": "jmp",

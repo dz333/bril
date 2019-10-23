@@ -1,15 +1,15 @@
 main {
   max: int = const 30;
   one: int = const 1;
+  zero: int = const 0;
   result: int = const 0;
   i: int = const 0;
 check:
   cond: bool = lt i max;
   br cond loop end;
 loop:
-  tmp:int = mul max i;
-  result:int = add result tmp;
   i:int = add i one;
+  result:int = add i zero;
   jmp check;
 end:
   print result;

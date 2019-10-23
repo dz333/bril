@@ -3,10 +3,10 @@
     {
       "instrs": [
         {
-          "dest": "max",
+          "dest": "size",
           "op": "const",
           "type": "int",
-          "value": 30
+          "value": 8
         },
         {
           "dest": "one",
@@ -15,16 +15,14 @@
           "value": 1
         },
         {
-          "dest": "zero",
-          "op": "const",
-          "type": "int",
-          "value": 0
-        },
-        {
-          "dest": "result",
-          "op": "const",
-          "type": "int",
-          "value": 0
+          "args": [
+            "size"
+          ],
+          "dest": "a",
+          "op": "alloc",
+          "type": {
+            "ptr": "int"
+          }
         },
         {
           "dest": "i",
@@ -33,12 +31,18 @@
           "value": 0
         },
         {
+          "dest": "result",
+          "op": "const",
+          "type": "int",
+          "value": 7
+        },
+        {
           "label": "check"
         },
         {
           "args": [
             "i",
-            "max"
+            "size"
           ],
           "dest": "cond",
           "op": "lt",
@@ -57,19 +61,21 @@
         },
         {
           "args": [
-            "i",
-            "one"
+            "a",
+            "i"
           ],
-          "dest": "i",
-          "op": "add",
-          "type": "int"
+          "dest": "ptra",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
         },
         {
           "args": [
             "i",
-            "zero"
+            "one"
           ],
-          "dest": "result",
+          "dest": "i",
           "op": "add",
           "type": "int"
         },
@@ -87,6 +93,12 @@
             "result"
           ],
           "op": "print"
+        },
+        {
+          "args": [
+            "a"
+          ],
+          "op": "free"
         }
       ],
       "name": "main"
