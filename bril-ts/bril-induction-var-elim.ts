@@ -356,10 +356,10 @@ export function eliminateInductionVars(func: CFGNode[]) {
                 }
             });
         }
-        
+
         for (let ind_var of replaced_basic_vars) {
             let can_elim_var = canElimVariableDefintion(ind_var, func, loop, loop_defs);
-            console.log(can_elim_var+","+ind_var);
+            // console.log(can_elim_var+","+ind_var);
             if (can_elim_var) {
                 for (let block of loop.blocks) {
                     let result_instrs = [];

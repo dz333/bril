@@ -1,6 +1,7 @@
 main {
   max: int = const 30;
   one: int = const 1;
+  zero: int = const 0;
   result: int = const 0;
   i: int = const 0;
 check:
@@ -8,7 +9,7 @@ check:
   br cond loop end;
 loop:
   i:int = add i one;
-  result:int = add one result;
+  result:int = add i zero;
   jmp check;
 end:
   print result;
