@@ -3,10 +3,52 @@
     {
       "instrs": [
         {
-          "dest": "size",
+          "dest": "a_len",
           "op": "const",
           "type": "int",
-          "value": 3
+          "value": 64
+        },
+        {
+          "args": [
+            "a_len"
+          ],
+          "dest": "a",
+          "op": "alloc",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_len",
+          "op": "const",
+          "type": "int",
+          "value": 64
+        },
+        {
+          "args": [
+            "b_len"
+          ],
+          "dest": "b",
+          "op": "alloc",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_len",
+          "op": "const",
+          "type": "int",
+          "value": 64
+        },
+        {
+          "args": [
+            "c_len"
+          ],
+          "dest": "c",
+          "op": "alloc",
+          "type": {
+            "ptr": "int"
+          }
         },
         {
           "dest": "one",
@@ -16,13 +58,4647 @@
         },
         {
           "args": [
-            "size"
+            "a"
           ],
-          "dest": "a",
-          "op": "alloc",
+          "dest": "a_ptr",
+          "op": "id",
           "type": {
             "ptr": "int"
           }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 62
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 42
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 18
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 8
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 89
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 9
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 54
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 98
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 70
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 27
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 8
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 14
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 19
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 24
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 53
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 73
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 52
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 58
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 15
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 56
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 23
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 73
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 85
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 77
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 64
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 5
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 55
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 19
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 11
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 20
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 97
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 92
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 73
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 28
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 53
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 35
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 83
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 16
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 14
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 39
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 27
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 66
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 51
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 30
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 67
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 99
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 84
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 55
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 55
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 98
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 47
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 50
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 22
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 39
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 76
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 57
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 34
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 100
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 39
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 93
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "a_val",
+          "op": "const",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "args": [
+            "a_ptr",
+            "a_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "a_ptr",
+            "one"
+          ],
+          "dest": "a_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "args": [
+            "b"
+          ],
+          "dest": "b_ptr",
+          "op": "id",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 78
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 44
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 39
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 55
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 73
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 17
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 7
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 52
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 82
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 82
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 40
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 40
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 88
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 78
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 93
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 71
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 99
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 49
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 31
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 35
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 43
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 92
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 83
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 45
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 32
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 34
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 57
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 39
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 12
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 95
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 37
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 28
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 98
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 47
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 99
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 79
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 33
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 61
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 63
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 34
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 35
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 100
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 52
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 94
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 74
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 10
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 47
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 42
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 27
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 32
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 98
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 43
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 94
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 38
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 74
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 55
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 89
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 23
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 98
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 72
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 18
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 39
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "b_val",
+          "op": "const",
+          "type": "int",
+          "value": 31
+        },
+        {
+          "args": [
+            "b_ptr",
+            "b_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "b_ptr",
+            "one"
+          ],
+          "dest": "b_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "args": [
+            "c"
+          ],
+          "dest": "c_ptr",
+          "op": "id",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 42
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 93
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 60
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 64
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 8
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 13
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 49
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 33
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 38
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 13
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 27
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 79
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 75
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 89
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 12
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 63
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 30
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 9
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 52
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 33
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 85
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 10
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 56
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 51
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 14
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 4
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 90
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 40
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 89
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 66
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 90
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 44
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 98
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 16
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 38
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 90
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 12
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 62
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 72
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 30
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 80
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 65
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 62
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 38
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 70
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 54
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 85
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 69
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 80
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 61
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 12
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 77
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 19
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 18
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 98
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 74
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 20
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 22
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 49
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "c_val",
+          "op": "const",
+          "type": "int",
+          "value": 85
+        },
+        {
+          "args": [
+            "c_ptr",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "c_ptr",
+            "one"
+          ],
+          "dest": "c_ptr",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "dest": "end",
+          "op": "const",
+          "type": "int",
+          "value": 8
         },
         {
           "dest": "i",
@@ -31,99 +4707,263 @@
           "value": 0
         },
         {
-          "dest": "tmp",
+          "dest": "one",
           "op": "const",
           "type": "int",
-          "value": 7
+          "value": 1
         },
         {
-          "args": [
-            "a",
-            "tmp"
-          ],
-          "op": "store"
-        },
-        {
-          "dest": "tmp",
-          "op": "const",
-          "type": "int",
-          "value": 7
-        },
-        {
-          "args": [
-            "a",
-            "one"
-          ],
-          "dest": "a1",
-          "op": "ptradd",
-          "type": {
-            "ptr": "int"
-          }
-        },
-        {
-          "args": [
-            "a1",
-            "tmp"
-          ],
-          "op": "store"
-        },
-        {
-          "args": [
-            "a1",
-            "one"
-          ],
-          "dest": "a2",
-          "op": "ptradd",
-          "type": {
-            "ptr": "int"
-          }
-        },
-        {
-          "args": [
-            "a2",
-            "tmp"
-          ],
-          "op": "store"
-        },
-        {
-          "dest": "result",
-          "op": "const",
-          "type": "int",
-          "value": 0
-        },
-        {
-          "label": "check"
+          "label": "for.cond.1"
         },
         {
           "args": [
             "i",
-            "size"
+            "end"
           ],
-          "dest": "cond",
+          "dest": "v5",
           "op": "lt",
           "type": "bool"
         },
         {
           "args": [
-            "cond",
-            "loop",
-            "end"
+            "v5",
+            "for.body.1",
+            "for.end.1"
           ],
           "op": "br"
         },
         {
-          "label": "loop"
+          "label": "for.body.1"
+        },
+        {
+          "dest": "j",
+          "op": "const",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "label": "for.cond.6"
+        },
+        {
+          "args": [
+            "j",
+            "end"
+          ],
+          "dest": "v10",
+          "op": "lt",
+          "type": "bool"
+        },
+        {
+          "args": [
+            "v10",
+            "for.body.6",
+            "for.end.6"
+          ],
+          "op": "br"
+        },
+        {
+          "label": "for.body.6"
+        },
+        {
+          "dest": "k",
+          "op": "const",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "label": "for.cond.11"
+        },
+        {
+          "args": [
+            "k",
+            "end"
+          ],
+          "dest": "v15",
+          "op": "lt",
+          "type": "bool"
+        },
+        {
+          "args": [
+            "v15",
+            "for.body.11",
+            "for.end.11"
+          ],
+          "op": "br"
+        },
+        {
+          "label": "for.body.11"
+        },
+        {
+          "args": [
+            "i",
+            "end"
+          ],
+          "dest": "a_tmp",
+          "op": "mul",
+          "type": "int"
+        },
+        {
+          "args": [
+            "a_tmp",
+            "j"
+          ],
+          "dest": "a_inc",
+          "op": "add",
+          "type": "int"
         },
         {
           "args": [
             "a",
-            "i"
+            "a_inc"
           ],
-          "dest": "ptra",
+          "dest": "a_ptr_idx",
           "op": "ptradd",
           "type": {
             "ptr": "int"
           }
+        },
+        {
+          "args": [
+            "a_ptr_idx"
+          ],
+          "dest": "a_val",
+          "op": "load",
+          "type": "int"
+        },
+        {
+          "args": [
+            "j",
+            "end"
+          ],
+          "dest": "b_tmp",
+          "op": "mul",
+          "type": "int"
+        },
+        {
+          "args": [
+            "b_tmp",
+            "k"
+          ],
+          "dest": "b_inc",
+          "op": "add",
+          "type": "int"
+        },
+        {
+          "args": [
+            "b",
+            "b_inc"
+          ],
+          "dest": "b_ptr_idx",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "args": [
+            "b_ptr_idx"
+          ],
+          "dest": "b_val",
+          "op": "load",
+          "type": "int"
+        },
+        {
+          "args": [
+            "i",
+            "end"
+          ],
+          "dest": "c_tmp",
+          "op": "mul",
+          "type": "int"
+        },
+        {
+          "args": [
+            "c_tmp",
+            "k"
+          ],
+          "dest": "c_inc",
+          "op": "add",
+          "type": "int"
+        },
+        {
+          "args": [
+            "c",
+            "c_inc"
+          ],
+          "dest": "c_ptr_idx",
+          "op": "ptradd",
+          "type": {
+            "ptr": "int"
+          }
+        },
+        {
+          "args": [
+            "c_ptr_idx"
+          ],
+          "dest": "c_val",
+          "op": "load",
+          "type": "int"
+        },
+        {
+          "args": [
+            "a_val",
+            "b_val"
+          ],
+          "dest": "tmp",
+          "op": "mul",
+          "type": "int"
+        },
+        {
+          "args": [
+            "c_val",
+            "tmp"
+          ],
+          "dest": "c_val",
+          "op": "add",
+          "type": "int"
+        },
+        {
+          "args": [
+            "c_ptr_idx",
+            "c_val"
+          ],
+          "op": "store"
+        },
+        {
+          "args": [
+            "k",
+            "one"
+          ],
+          "dest": "k",
+          "op": "add",
+          "type": "int"
+        },
+        {
+          "args": [
+            "for.cond.11"
+          ],
+          "op": "jmp"
+        },
+        {
+          "label": "for.end.11"
+        },
+        {
+          "args": [
+            "j",
+            "one"
+          ],
+          "dest": "j",
+          "op": "add",
+          "type": "int"
+        },
+        {
+          "args": [
+            "for.cond.6"
+          ],
+          "op": "jmp"
+        },
+        {
+          "label": "for.end.6"
         },
         {
           "args": [
@@ -136,39 +4976,42 @@
         },
         {
           "args": [
-            "ptra"
+            "for.cond.1"
           ],
-          "dest": "tmp",
+          "op": "jmp"
+        },
+        {
+          "label": "for.end.1"
+        },
+        {
+          "args": [
+            "c_ptr_idx"
+          ],
+          "dest": "c_val",
           "op": "load",
           "type": "int"
         },
         {
           "args": [
-            "result",
-            "tmp"
-          ],
-          "dest": "result",
-          "op": "add",
-          "type": "int"
-        },
-        {
-          "args": [
-            "check"
-          ],
-          "op": "jmp"
-        },
-        {
-          "label": "end"
-        },
-        {
-          "args": [
-            "result"
+            "c_val"
           ],
           "op": "print"
         },
         {
           "args": [
             "a"
+          ],
+          "op": "free"
+        },
+        {
+          "args": [
+            "b"
+          ],
+          "op": "free"
+        },
+        {
+          "args": [
+            "c"
           ],
           "op": "free"
         }
