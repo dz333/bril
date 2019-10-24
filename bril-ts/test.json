@@ -6,10 +6,10 @@
           "label": "__block_0"
         },
         {
-          "dest": "size",
+          "dest": "max",
           "op": "const",
           "type": "int",
-          "value": 3
+          "value": 30
         },
         {
           "dest": "one",
@@ -18,78 +18,19 @@
           "value": 1
         },
         {
-          "args": [
-            "size"
-          ],
-          "dest": "a",
-          "op": "alloc",
-          "type": {
-            "ptr": "int"
-          }
-        },
-        {
-          "dest": "i",
+          "dest": "zero",
           "op": "const",
           "type": "int",
           "value": 0
         },
         {
-          "dest": "tmp",
-          "op": "const",
-          "type": "int",
-          "value": 7
-        },
-        {
-          "args": [
-            "a",
-            "tmp"
-          ],
-          "op": "store"
-        },
-        {
-          "dest": "tmp",
-          "op": "const",
-          "type": "int",
-          "value": 7
-        },
-        {
-          "args": [
-            "a",
-            "one"
-          ],
-          "dest": "a1",
-          "op": "ptradd",
-          "type": {
-            "ptr": "int"
-          }
-        },
-        {
-          "args": [
-            "a1",
-            "tmp"
-          ],
-          "op": "store"
-        },
-        {
-          "args": [
-            "a1",
-            "one"
-          ],
-          "dest": "a2",
-          "op": "ptradd",
-          "type": {
-            "ptr": "int"
-          }
-        },
-        {
-          "args": [
-            "a2",
-            "tmp"
-          ],
-          "op": "store"
-        },
-        {
           "dest": "result",
+          "op": "const",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "dest": "i",
           "op": "const",
           "type": "int",
           "value": 0
@@ -104,7 +45,7 @@
           "label": "check"
         },
         {
-          "op": "ptrlt",
+          "op": "lt",
           "args": [
             "__0",
             "__3"
@@ -124,16 +65,6 @@
           "label": "loop"
         },
         {
-          "op": "id",
-          "args": [
-            "__0"
-          ],
-          "dest": "ptra",
-          "type": {
-            "ptr": "int"
-          }
-        },
-        {
           "args": [
             "i",
             "one"
@@ -143,31 +74,20 @@
           "type": "int"
         },
         {
-          "op": "ptradd",
+          "op": "add",
           "dest": "__0",
-          "type": {
-            "ptr": "int"
-          },
+          "type": "int",
           "args": [
             "__0",
             "one"
           ]
         },
         {
+          "op": "id",
           "args": [
-            "ptra"
-          ],
-          "dest": "tmp",
-          "op": "load",
-          "type": "int"
-        },
-        {
-          "args": [
-            "result",
-            "tmp"
+            "__0"
           ],
           "dest": "result",
-          "op": "add",
           "type": "int"
         },
         {
@@ -186,12 +106,6 @@
           "op": "print"
         },
         {
-          "args": [
-            "a"
-          ],
-          "op": "free"
-        },
-        {
           "op": "ret",
           "args": []
         },
@@ -208,34 +122,30 @@
           ]
         },
         {
-          "op": "ptradd",
+          "op": "add",
           "dest": "__0",
-          "type": {
-            "ptr": "int"
-          },
+          "type": "int",
           "args": [
-            "a",
+            "zero",
             "__1"
           ]
         },
         {
           "op": "mul",
           "args": [
-            "size",
+            "max",
             "one"
           ],
           "type": "int",
           "dest": "__2"
         },
         {
-          "op": "ptradd",
+          "op": "add",
           "args": [
-            "a",
+            "zero",
             "__2"
           ],
-          "type": {
-            "ptr": "int"
-          },
+          "type": "int",
           "dest": "__3"
         },
         {

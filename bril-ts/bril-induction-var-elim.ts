@@ -10,7 +10,7 @@ export interface Ind_var_opt {
 };
 type induction_variable = {var_name:string, a:Ind_var_opt, b:Option<Ind_var_opt>}
 
-function is_loop_invariant(var_name: string, block:CFGNode, loop: HashSet<CFGNode>, reaching_definitions:DFResult<Definition>):boolean {
+function is_loop_invariant(var_name: string, loop: HashSet<CFGNode>, reaching_definitions:DFResult<Definition>):boolean {
     // a variable is loop invariant if it's reaching definitions are all outside of the loop
     // or there is exactly one inside of the loop and it is a write to a constant
     let defs:HashSet<Definition> = HashSet.empty();
@@ -34,12 +34,36 @@ function is_loop_invariant(var_name: string, block:CFGNode, loop: HashSet<CFGNod
     }
 }
 
+function getLoopDefinitions(loop: HashSet<CFGNode>) {
+    let result:HashMap<string, HashSet<Definition>> = HashMap.empty();
+    for (let block of loop) {
+        block.getInstrs().forEach((instr, instr_idx) => {
+            if (bril.isValueInstruction(instr)) {
+                let def = new Definition(instr.dest, {block: block, index: instr_idx});
+                let defs = result.get(instr.dest);
+                if (defs.isSome()) {
+                    result = result.put(instr.dest, defs.get().add(def));
+                } else {
+                    result = result.put(instr.dest, HashSet.of(def));
+                }
+            }
+        })
+    }
+    return result;
+}
+
 function get_basic_induction_vars(loop: HashSet<CFGNode>, reaching_definitions: DFResult<Definition>): HashMap<string, [bril.ValueInstruction,induction_variable]> {
-    let maybe_basic_ind_vars: HashMap<string, [bril.ValueInstruction, induction_variable][]> = HashMap.empty();
+    let basic_ind_vars: HashMap<string, [bril.ValueInstruction, induction_variable]> = HashMap.empty();
     // find constant variables
     // find instructions of the form v = add v const or v = ptradd v const
-    for (let block of loop) {
-        for (let instr of block.getInstrs()) {
+
+    let loopDefs = getLoopDefinitions(loop);
+
+    for (let [_, defs] of loopDefs) {
+        let def_option = defs.single();
+        if (def_option.isSome()) {
+            let def = def_option.get();
+            let instr = def.loc.block.getInstrs()[def.loc.index];
             if (bril.isValueInstruction(instr)) {
                 if (instr.op == "add" || instr.op == "ptradd") {
                     let dest_index = instr.args.indexOf(instr.dest);
@@ -47,21 +71,13 @@ function get_basic_induction_vars(loop: HashSet<CFGNode>, reaching_definitions: 
                         let other_args = instr.args.slice(0, dest_index).concat(instr.args.slice(dest_index+1));
                         let all_loop_inv = true;
                         for (let arg of other_args) {
-                            if (!is_loop_invariant(arg, block, loop, reaching_definitions)) {
+                            if (!is_loop_invariant(arg, loop, reaching_definitions)) {
                                 all_loop_inv = false;
                             }
                         }
                         if (all_loop_inv) {
-                            let instrs_option = maybe_basic_ind_vars.get(instr.dest);
-                            if (instrs_option.isNone()) {
-                                let ind_var:induction_variable = {var_name:instr.dest, a:{op:instr.op == "add" ? "const" : "ptrconst", arg: other_args[0]}, b:Option.none()};
-                                maybe_basic_ind_vars = maybe_basic_ind_vars.put(instr.dest, [[instr,ind_var]]); 
-                            } else if (instrs_option.isSome()) {
-                                let instrs = instrs_option.get();
-                                let ind_var:induction_variable = {var_name:instr.dest, a:{op:instr.op == "add" ? "const" : "ptrconst", arg: other_args[0]}, b:Option.none()};
-                                instrs.push([instr,ind_var]);
-                                maybe_basic_ind_vars = maybe_basic_ind_vars.put(instr.dest, instrs);
-                            }
+                            let ind_var:induction_variable = {var_name:instr.dest, a:{op:instr.op == "add" ? "const" : "ptrconst", arg: other_args[0]}, b:Option.none()};
+                            basic_ind_vars = basic_ind_vars.put(instr.dest, [instr,ind_var]); 
                         }
                     }
 
@@ -71,16 +87,10 @@ function get_basic_induction_vars(loop: HashSet<CFGNode>, reaching_definitions: 
         }
     }
 
-    let basic_ind_vars: HashMap<string, [bril.ValueInstruction,induction_variable]> = HashMap.empty();
-    for (let [var_name, instrs] of maybe_basic_ind_vars) {
-        if (instrs.length == 1) {
-            basic_ind_vars = basic_ind_vars.put(var_name, instrs[0]);
-        }
-    }
     return basic_ind_vars;
 }
 
-function extract_derived_ind_var(instr: bril.ValueInstruction, block: CFGNode,
+function extract_derived_ind_var(instr: bril.ValueInstruction,
      basic_ind_vars: HashMap<string, [bril.ValueInstruction,induction_variable]>, loop: HashSet<CFGNode>, reaching_definitions: DFResult<Definition>): Option<induction_variable> {
     if (instr.op == "add" || instr.op == "mul" || instr.op == "ptradd") {
          // one arg is induction variable, one arg is loop invariant
@@ -93,7 +103,7 @@ function extract_derived_ind_var(instr: bril.ValueInstruction, block: CFGNode,
                 if (basic_ind_var.var_name != instr.dest) {
                     // other_arg is the loop invariant part
                     let other_arg = instr.args[1-i];
-                    if (is_loop_invariant(other_arg, block, loop, reaching_definitions)) {
+                    if (is_loop_invariant(other_arg, loop, reaching_definitions)) {
                         if (instr.op == "add" || instr.op == "ptradd") {
                             let new_b: Ind_var_opt;
                             if (basic_ind_var.b.isNone()) {
@@ -126,16 +136,23 @@ function get_derived_induction_variables(
     basic_ind_vars: HashMap<string, [bril.ValueInstruction,induction_variable]>,
      loop: HashSet<CFGNode>, reaching_definitions: DFResult<Definition>): HashMap<string, [bril.ValueInstruction,induction_variable]> {
     let derived_ind_vars:HashMap<string, [bril.ValueInstruction, induction_variable]> = HashMap.empty();
-    for (let block of loop) {
-        for (let instr of block.getInstrs()) {
+
+    let loopDefs = getLoopDefinitions(loop);
+
+    for (let [_, defs] of loopDefs) {
+        let def_option = defs.single();
+        if (def_option.isSome()) {
+            let def = def_option.get();
+            let instr = def.loc.block.getInstrs()[def.loc.index];
             if (bril.isValueInstruction(instr)) {
-                let derived_ind_var = extract_derived_ind_var(instr, block, basic_ind_vars, loop, reaching_definitions);
+                let derived_ind_var = extract_derived_ind_var(instr, basic_ind_vars, loop, reaching_definitions);
                 if (derived_ind_var.isSome()) {
                     derived_ind_vars = derived_ind_vars.put(instr.dest, [instr, derived_ind_var.get()]);
                 }
             }
         }
     }
+    
     return derived_ind_vars;
 }
 
@@ -169,7 +186,7 @@ function replace_ind_vars(is_ptr:boolean, basic_var: string, a_var: string, b_va
         for (let instr of block.getInstrs()) {
             if (instr.op == "lt" && instr.args.indexOf(basic_var) != -1) {
                 let n = instr.args[1-instr.args.indexOf(basic_var)];
-                if (is_loop_invariant(n, block, loop.blocks, reaching_definitions)) {
+                if (is_loop_invariant(n, loop.blocks, reaching_definitions)) {
                     let mul_var = gen_fresh_vars();
                     let mul_instr: bril.ValueInstruction = {op:"mul", args:[n, a_var], type:"int", dest:mul_var};
                     header_instrs.push(mul_instr);
@@ -283,13 +300,20 @@ export function eliminateInductionVars(func: CFGNode[]) {
             instrs: [],
             termInstr: {op:"jmp", args:[loop.entry.name]}
         };
+        // console.log(basic_ind_vars);
+        // console.log(derived_ind_vars);
         let preentry = new CFGNode(block.name, block, HashSet.empty(), HashSet.empty());
         addHeader(func, loop.entry, preentry, loop.blocks.remove(loop.entry));
         func.push(preentry);
+        let replaced_basic_vars = HashSet.empty();
         for (let [dest, [instr, ind_var]] of derived_ind_vars) {
             let is_ptr = instr.op == "ptradd";
             let [a_var, b_var, new_dest] = strength_reduction(is_ptr, dest, gen_fresh_vars, ind_var, loop, preentry);
-            replace_ind_vars(is_ptr, ind_var.var_name, a_var, b_var, new_dest, gen_fresh_vars, preentry, loop, reaching_definitions);
+            // no fancy heuristic, just replace the basic induction variable with the first derived induction variable that we find
+            if (!replaced_basic_vars.contains(ind_var.var_name)) {
+                replace_ind_vars(is_ptr, ind_var.var_name, a_var, b_var, new_dest, gen_fresh_vars, preentry, loop, reaching_definitions);
+                replaced_basic_vars = replaced_basic_vars.add(ind_var.var_name);
+            }
         }
     }
 }
