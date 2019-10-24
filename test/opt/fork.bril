@@ -1,0 +1,25 @@
+main {
+  max: int = const 30;
+  one: int = const 1;
+  two: int = const 2;
+  result: int = const 0;
+  i: int = const 0;
+check:
+  cond: bool = lt i max;
+  br cond ifl end;
+ifl:
+  cond: bool = lt i result;
+  br cond leftloop rightloop;
+leftloop:
+  tmp:int = mul max i;
+  result:int = add result tmp;
+  i:int = add i one;
+  jmp check;
+rightloop:
+  tmp:int = mul two i;
+  result:int = add result tmp;
+  i:int = add i one;
+  jmp check;
+end:
+  print result;
+}
