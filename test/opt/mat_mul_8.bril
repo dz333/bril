@@ -602,16 +602,16 @@ for.cond.11:
   v15: bool = lt k end;
   br v15 for.body.11 for.end.11;
 for.body.11:
-  a_inc: int = mul i end;
-  a_inc: int = add a_inc j;
+  a_inc_tmp: int = mul i end;
+  a_inc: int = add a_inc_tmp j;
   a_ptr_idx: ptr<int> = ptradd a a_inc;
   a_val: int = load a_ptr_idx;
-  b_inc: int = mul j end;
-  b_inc: int = add b_inc k;
+  b_inc_tmp: int = mul j end;
+  b_inc: int = add b_inc_tmp k;
   b_ptr_idx: ptr<int> = ptradd b b_inc;
   b_val: int = load b_ptr_idx;
-  c_inc: int = mul i end;
-  c_inc: int = add c_inc k;
+  c_inc_tmp: int = mul i end;
+  c_inc: int = add c_inc_tmp k;
   c_ptr_idx: ptr<int> = ptradd c c_inc;
   c_val: int = load c_ptr_idx;
   tmp: int = mul a_val b_val;
