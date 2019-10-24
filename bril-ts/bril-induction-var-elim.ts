@@ -3,6 +3,7 @@ import { HashMap, HashSet, Option } from 'prelude-ts';
 import { getDominators, findNaturalLoops, Loop, addHeader, getUses } from './bril-opt';
 import { CFGNode, TerminatingBlock } from './cfg-defs';
 import { dfWorklist, DFResult, Definition, written, setUnion, getInstructionAt, reachingDefinitions, liveVars } from './bril-df';
+import { Hash } from 'crypto';
 
 export interface Ind_var_opt {
     op: "add" | "mul" | "ptradd" | "ptrconst" | "const";
@@ -336,7 +337,7 @@ export function eliminateInductionVars(func: CFGNode[]) {
         let preentry = new CFGNode(block.name, block, HashSet.empty(), HashSet.empty());
         addHeader(func, loop.entry, preentry, loop.blocks.remove(loop.entry));
         func.push(preentry);
-        let replaced_basic_vars = HashSet.empty();
+        let replaced_basic_vars: HashSet<string> = HashSet.empty();
         for (let [dest, [instr, ind_var]] of derived_ind_vars) {
             let is_ptr = instr.op == "ptradd";
             let [a_var, b_var, new_dest] = strength_reduction(is_ptr, dest, gen_fresh_vars, ind_var, loop, preentry);
@@ -344,6 +345,34 @@ export function eliminateInductionVars(func: CFGNode[]) {
             if (!replaced_basic_vars.contains(ind_var.var_name)) {
                 replace_ind_vars(is_ptr, ind_var.var_name, a_var, b_var, new_dest, gen_fresh_vars, preentry, loop, reaching_definitions);
                 replaced_basic_vars = replaced_basic_vars.add(ind_var.var_name);
+            }
+        }
+        let loop_defs:HashSet<Definition> = HashSet.empty();
+        for (let block of loop.blocks) {
+            block.getInstrs().forEach((i, idx) => {
+                if (bril.isValueInstruction(i)) {
+                    let def = new Definition(i.dest, { block: block, index: idx } );
+                    loop_defs = loop_defs.add(def);
+                }
+            });
+        }
+        
+        for (let ind_var of replaced_basic_vars) {
+            let can_elim_var = canElimVariableDefintion(ind_var, func, loop, loop_defs);
+            console.log(can_elim_var+","+ind_var);
+            if (can_elim_var) {
+                for (let block of loop.blocks) {
+                    let result_instrs = [];
+                    for (let instr of block.getInstrs()) {
+                        if (bril.isValueInstruction(instr) && instr.dest == ind_var) {
+                            // nothing
+                        } else {
+                            result_instrs.push(instr);
+                        }
+                        block.setInstrs(result_instrs);
+                    }
+                }
+
             }
         }
     }
