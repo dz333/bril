@@ -1,8 +1,8 @@
 import * as bril from './bril';
 import { HashMap, HashSet, Option } from 'prelude-ts';
-import { getDominators, findNaturalLoops, Loop, addHeader, eliminateDeadCode } from './bril-opt';
+import { getDominators, findNaturalLoops, Loop, addHeader, getUses } from './bril-opt';
 import { CFGNode, TerminatingBlock } from './cfg-defs';
-import { dfWorklist, DFResult, Definition, written, setUnion, getInstructionAt, reachingDefinitions } from './bril-df';
+import { dfWorklist, DFResult, Definition, written, setUnion, getInstructionAt, reachingDefinitions, liveVars } from './bril-df';
 
 export interface Ind_var_opt {
     op: "add" | "mul" | "ptradd" | "ptrconst" | "const";
@@ -203,6 +203,37 @@ function fresh_vars(existing: HashSet<string>) {
         }
         return new_var;
     }
+}
+
+
+function canElimVariableDefintion(varName: string, prog: CFGNode[], loop: Loop, loopDefs: HashSet<Definition>) {
+    //check that varName is not a live out of the loop
+    let liveOuts: HashSet<string> = getLoopLiveOuts(prog, loop);
+    if (liveOuts.contains(varName)) {
+        return false;
+    }
+    //check that varName is defined exactly once inside the loop
+    let def = loopDefs.filter( d => { return d.varName == varName; }).single();
+    if (def.isNone()) {
+        return false;
+    }
+    //check that all uses of varName are in exactly def
+    let uses = getUses(varName, loop.blocks.toArray()).single();
+    return uses.isSome() && uses.get().equals(def.get());
+}
+
+function getLoopLiveOuts(prog: CFGNode[], loop: Loop) {
+    let lives = dfWorklist(prog, liveVars);
+    let loopSucc: HashSet<CFGNode> = loop.blocks.foldLeft(HashSet.empty(), (soFar, block) => {
+        return soFar.addAll(block.getSuccessors().filter(n => {
+            return !loop.blocks.contains(n);
+        }));
+    });
+    let loopOuts: HashSet<string> = HashSet.empty();
+    loopSucc.forEach(b => {
+        loopOuts = loopOuts.addAll(lives.ins.get(b).getOrThrow());
+    });
+    return loopOuts;
 }
 
 function gen_instrs_from_ind_var_opt(opt: Ind_var_opt, gen_fresh_vars: () => string): [string, bril.ValueInstruction[]] {

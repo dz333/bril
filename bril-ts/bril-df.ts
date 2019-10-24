@@ -126,12 +126,16 @@ export let definedVars: DFAnalysis<string> = {
 }
 
 export function getInstructionAt(loc:Location): bril.Instruction {
-    return loc.block.getInstrs()[loc.index];
+    if (loc.index < 0) {
+        return loc.block.getTerminator();
+    } else {
+        return loc.block.getInstrs()[loc.index];
+    }
 }
 
 export interface Location {
     block: cfg.CFGNode,
-    index: number
+    index: number,
 }
 
 export class Definition implements HasEquals {

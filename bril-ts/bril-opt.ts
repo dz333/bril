@@ -506,6 +506,30 @@ function eliminateKilledLocals(node: CFGNode, liveOuts: HashSet<string>) {
     return result.length != instrs.length;
 }
 /**
+ * Find all uses of varName in blocks
+ * @param varName 
+ * @param blocks 
+ */
+export function getUses(varName:string, blocks:CFGNode[]): HashSet<df.Definition> {
+  let result: HashSet<df.Definition> = HashSet.empty();
+  for (let b of blocks) {
+    b.getInstrs().forEach( (instr, instr_idx) => {
+      if (bril.isOperation(instr)) {
+        if (instr.args.includes(varName)) {
+          result = result.add(new df.Definition(
+            bril.isValueInstruction(instr) ? instr.dest : "",
+            { block: b, index: instr_idx}));
+        }
+      }
+    });
+    if (b.getTerminator().args.includes(varName)) {
+      result = result.add(new df.Definition("", { block: b, index: -1}));
+    }
+  }
+  return result;
+}
+
+/**
  * Given a list of CFG nodes for a function, produce the bril function that
  * corresponds to that CFG. The bril text
  * is laid out in the same order as the provided
